@@ -28,7 +28,8 @@ function bootstrap (session) {
 
   app.get('/sessionId', (req, res) => {
     res.status(200).json({
-      sessionId: session.sessionId
+      sessionId: session.sessionId,
+      apiKey: OPENTOK_API_KEY
     })
   })
 
@@ -39,8 +40,9 @@ function bootstrap (session) {
         expireTime: Math.round((Date.now() / 1000) + (60 * 60)) // 1 hour from now()
       })
       res.status(200).json({
-        token: token,
+        apiKey: OPENTOK_API_KEY,
         sessionId: session.sessionId,
+        token: token,
         role: 'publisher'
       })
     } catch (e) {
@@ -54,7 +56,7 @@ function bootstrap (session) {
 
 // Generate an OpenTok session. Will will use a single session only
 const OT = new OpenTok(OPENTOK_API_KEY, OPENTOK_API_SECRET)
-OT.createSession({ mediaMode: 'router' }, (err, session) => {
+OT.createSession({ mediaMode: 'routed' }, (err, session) => {
   if (err) {
     console.log('Error creating OpenTok session', err)
     process.exit(1)

@@ -1,0 +1,44 @@
+<!doctype html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>OpenTok Proctoring demo - Student</title>
+    <link href="/css/student.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <h1>OpenTok Proctoring demo - Student</h1>
+    <p><a href="/">&larr; Exit demo</a></p>
+    <div class="control-panel">
+        <button id="publish" disabled="disabled">Publish cameras</button>
+        <div id="message">Offline</div>
+    </div>
+    <div class="setup-panel">
+        <div id="camera1">
+            <h2>Camera 1</h2>
+            <p>
+                <label for="camera-list1">Choose camera</label>
+                <select id="camera-list1" class="camera1"></select>
+            </p>
+            <button id="start-camera1" class="start-camera camera1" disabled="disabled">Start camera 1</button>
+            <div id="camera1-view" class="camera-view"></div>
+        </div>
+        <div id="camera2">
+            <h2>Camera 2</h2>
+            <p>
+                <label for="camera-list2">Choose camera</label>
+                <select id="camera-list2" class="camera2"></select>
+            </p>
+            <button id="start-camera2" class="start-camera camera2" disabled="disabled">Start camera 2</button>
+            <div id="camera2-view" class="camera-view"></div>
+        </div>
+    </div>
+
+    <script src="/vendor/jquery-3.2.1.min.js"></script>
+    <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+    <script src="/js/student.js"></script>
+</body>
+
+</html>
