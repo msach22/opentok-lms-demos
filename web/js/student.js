@@ -57,6 +57,7 @@ window.addEventListener('load', function studentController () {
             console.log(err)
             return
           }
+          $('#publish').attr('disabled', 'disabled')
           console.log('Published camera')
           msg.text('Live')
         })
