@@ -2,7 +2,7 @@
 
 A simple OpenTok demo showing a proctoring setup where each participant publishes 3 video feeds simultaneously.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kaustavdm/opentok-lms-demos/tree/proctoring)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kaustavdm/opentok-lms-demos/tree/proctoring-multicamera)
 
 ## Features
 
