@@ -3,9 +3,11 @@
 window.addEventListener('load', function studentController () {
   var session
   var connections = {}
+  var streams = {}
   var subscribers = {}
   var studentsDiv = $('#students')
   var msg = $('#message')
+  var zoomed = null
 
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
@@ -20,23 +22,36 @@ window.addEventListener('load', function studentController () {
         console.log('No streams available for connid', connId)
         return
       }
-      subscribe(connections[connId][1], connId)
+      connections[connId].forEach(function (c) {
+        console.log('Zooming', c, streams[c], subscribers[c])
+        if (!subscribers[c]) {
+          subscribe(streams[c], connId)
+        }
+      })
+      zoomed = connId
     })
 
     $('#students').on('click', 'button.zoomed', function (evt) {
-      unsubscribe(evt.target.dataset.connid)
+      var connId = evt.target.dataset.connid
+      connections[connId].forEach(function (c, i) {
+        if (i === 0) {
+          return
+        }
+        unsubscribe(c)
+      })
       evt.target.parentNode.classList.remove('zoomed')
       evt.target.classList.remove('zoomed')
       evt.target.classList.add('zoom')
       evt.target.innerText = 'Zoom'
+      zoomed = null
     })
 
-    function unsubscribe (connId) {
-      var streamId = connections[connId][1].id
+    function unsubscribe (streamId) {
       console.log('Unsubscribing', subscribers[streamId])
       if (subscribers[streamId]) {
         session.unsubscribe(subscribers[streamId])
       }
+      subscribers[streamId] = null
       $('#stream' + streamId).remove()
     }
 
@@ -59,24 +74,40 @@ window.addEventListener('load', function studentController () {
     }
 
     session.on('streamDestroyed', function (event) {
-      console.log('Session destroyed', event)
+      console.log('Stream destroyed', event)
+      var id = event.stream.connection.data
+      streams[event.stream.id] = null
+      connections[id] = connections[id].filter(function (c) {
+        return c !== event.stream.id
+      })
       $('#stream' + event.stream.id).remove()
     })
 
     session.on('connectionDestroyed', function (event) {
-      console.log('Connection destroyed', event)
-      $('#conn' + event.connection.connectionId).remove()
+      var id = event.connection.data
+      console.log('Connection destroyed', event, connections[id])
+      if (connections[id].length > 0) {
+        if (!subscribers[connections[id][0]]) {
+          subscribe(streams[connections[id][0]], id)
+        }
+      } else {
+        $('#conn' + id).remove()
+      }
     })
 
     session.on('streamCreated', function (event) {
       console.log('Stream created', event)
-      var connId = event.stream.connection.id || event.stream.connection.connectionId
-      if (!connections[connId]) {
-        connections[connId] = []
-        studentsDiv.append('<div id="conn' + connId + '"><button class="zoom" data-connid="' + connId + '">Zoom</button></div>')
-        subscribe(event.stream, connId)
+      var id = event.stream.connection.data
+      var streamId = event.stream.id
+      if (!connections[id] || connections[id].length === 0) {
+        connections[id] = []
+        studentsDiv.append('<div id="conn' + id + '"><button class="zoom" data-connid="' + id + '">Zoom</button></div>')
+        subscribe(event.stream, id)
+      } else if (zoomed === id) {
+        subscribe(event.stream, id)
       }
-      connections[connId].push(event.stream)
+      connections[id].push(streamId)
+      streams[streamId] = event.stream
     })
 
     session.connect(data.token, function (error) {
@@ -91,7 +122,7 @@ window.addEventListener('load', function studentController () {
     })
   }
 
-  $.get('/token', function (data) {
+  $.get('/token?id=proctor', function (data) {
     launchSession(data)
   }, 'json')
     .fail(function (err) {

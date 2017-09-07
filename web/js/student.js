@@ -2,16 +2,24 @@
 
 window.addEventListener('load', function studentController () {
   var session
-  var camCount = 0;
-  var publishers = {
-    camera1: null,
-    camera2: null,
-    screen: null
-  }
+  var publisher
+  var id = window.location.hash.slice(1)
   var msg = $('#message')
 
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
+
+    session.on('streamCreated', function (event) {
+      console.log('streamCreated', event)
+      if (event.stream.connection.data === id) {
+        session.subscribe(event.stream, 'other-sources', {
+          insertMode: 'append',
+          width: '200px',
+          height: '150px'
+        })
+      }
+    })
+
     session.connect(data.token, function (error) {
       if (error) {
         alert('Error connecting to OpenTok session')
@@ -23,67 +31,34 @@ window.addEventListener('load', function studentController () {
       msg.text('Connected to OpenTok')
       $('.start-camera').removeAttr('disabled')
 
-      $('#start-camera1').on('click', function (evt) {
-        publishers.camera1 = OT.initPublisher('camera1-view', {
+      $('#start-camera').on('click', function (evt) {
+        publisher = OT.initPublisher('camera-view', {
           audioSource: null,
-          videoSource: $('#camera-list1').val(),
+          videoSource: $('#camera-list').val(),
           height: '100%',
           width: '100%',
           insertMode: 'append',
-          name: 'Camera 1'
+          name: $('#camera-name').val()
         }, function (err) {
           if (err) {
             alert('Error getting feed for camera 1')
             console.log(err)
             return
           }
-          camCount++
-          if (camCount === 2) {
-            $('#publish').removeAttr('disabled')
-          }
-          $('.camera1').attr('disabled', 'disabled')
-        })
-      })
-
-      $('#start-camera2').on('click', function (evt) {
-        publishers.camera2 = OT.initPublisher('camera2-view', {
-          audioSource: null,
-          videoSource: $('#camera-list2').val(),
-          height: '100%',
-          width: '100%',
-          insertMode: 'append',
-          name: 'Camera 2'
-        }, function (err) {
-          if (err) {
-            alert('Error getting feed for camera 2')
-            console.log(err)
-            return
-          }
-          camCount++
-          if (camCount === 2) {
-            $('#publish').removeAttr('disabled')
-          }
-          $('.camera2').attr('disabled', 'disabled')
+          $('#publish').removeAttr('disabled')
+          $('.camera').attr('disabled', 'disabled')
         })
       })
 
       $('#publish').on('click', function (evt) {
-        session.publish(publishers.camera1, function (err) {
+        session.publish(publisher, function (err) {
           if (err) {
             alert('Unable to publish camera 1')
             console.log(err)
             return
           }
-          console.log('Published camera 1')
-          session.publish(publishers.camera2, function (err) {
-            if (err) {
-              alert('Unable to publish camera2')
-              console.log(err)
-              return
-            }
-            console.log('Published camera 2')
-            msg.text('Live')
-          })
+          console.log('Published camera')
+          msg.text('Live')
         })
       })
     })
@@ -109,10 +84,12 @@ window.addEventListener('load', function studentController () {
       return '<option value="' + d.deviceId + '">' + deviceLabel + '</option>'
     })
 
-    $('#camera-list1').append(videoDevices.join(''))
-    $('#camera-list2').append(videoDevices.join(''))
+    $('#camera-list').append(videoDevices.join(''))
 
-    $.get('/token', function (data) {
+    $.get('/token?id=' + id, function (data) {
+      console.log('Token data', data)
+      window.location.hash = data.id
+      $('#share-url').val(window.location.href)
       launchSession(data)
     }, 'json')
       .fail(function (err) {

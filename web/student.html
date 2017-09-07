@@ -14,25 +14,25 @@
     <div class="control-panel">
         <button id="publish" disabled="disabled">Publish cameras</button>
         <div id="message">Offline</div>
+        <p>
+            Join this URL to publish another video source:
+            <input id="share-url" type="text" readonly>
+        </p>
     </div>
     <div class="setup-panel">
-        <div id="camera1">
-            <h2>Camera 1</h2>
+        <div id="camera-setup">
+            <h2>Video source</h2>
             <p>
-                <label for="camera-list1">Choose camera</label>
-                <select id="camera-list1" class="camera1"></select>
+                <label for="camera-list">Choose camera</label>
+                <select id="camera-list" class="camera"></select>
             </p>
-            <button id="start-camera1" class="start-camera camera1" disabled="disabled">Start camera 1</button>
-            <div id="camera1-view" class="camera-view"></div>
+            <input id="camera-name" class="camera" type="text" placeholder="Add a name for this stream">
+            <button id="start-camera" class="start-camera camera" disabled="disabled">Start camera</button>
+            <div id="camera-view" class="camera-view"></div>
         </div>
-        <div id="camera2">
-            <h2>Camera 2</h2>
-            <p>
-                <label for="camera-list2">Choose camera</label>
-                <select id="camera-list2" class="camera2"></select>
-            </p>
-            <button id="start-camera2" class="start-camera camera2" disabled="disabled">Start camera 2</button>
-            <div id="camera2-view" class="camera-view"></div>
+        <div id="others">
+            <h2>Other video sources</h2>
+            <div id="other-sources"></div>
         </div>
     </div>
 

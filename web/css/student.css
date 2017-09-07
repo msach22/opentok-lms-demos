@@ -22,3 +22,8 @@ body {
 .control-panel {
     text-align: center;
 }
+#share-url {
+    width: 30rem;
+    display: inline-block;
+    text-align: center;
+}

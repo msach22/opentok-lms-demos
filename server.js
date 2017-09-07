@@ -4,6 +4,12 @@
 
 const express = require('express')
 const OpenTok = require('opentok')
+const { randomBytes } = require('crypto')
+
+let createId = () => {
+  var id = randomBytes(3).toString("hex");
+  return [id.slice(0, 3), id.slice(3)].join("-");
+};
 
 // Get configurations
 const PORT = process.env.PORT || 8080
@@ -34,15 +40,18 @@ function bootstrap (session) {
   })
 
   app.get('/token', (req, res) => {
+    var id = req.query.id || createId()
     try {
       const token = OT.generateToken(session.sessionId, {
         role: 'publisher',
+        data: id,
         expireTime: Math.round((Date.now() / 1000) + (60 * 60)) // 1 hour from now()
       })
       res.status(200).json({
         apiKey: OPENTOK_API_KEY,
         sessionId: session.sessionId,
         token: token,
+        id: id,
         role: 'publisher'
       })
     } catch (e) {
