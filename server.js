@@ -7,9 +7,9 @@ const OpenTok = require('opentok')
 const { randomBytes } = require('crypto')
 
 let createId = () => {
-  var id = randomBytes(3).toString("hex");
-  return [id.slice(0, 3), id.slice(3)].join("-");
-};
+  var id = randomBytes(3).toString('hex')
+  return [id.slice(0, 3), id.slice(3)].join('-')
+}
 
 // Get configurations
 const PORT = process.env.PORT || 8080
