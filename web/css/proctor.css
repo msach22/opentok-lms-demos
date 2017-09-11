@@ -40,11 +40,52 @@ body {
     left: 0;
     top: 0;
     background: rgba(255, 255, 255, 0.9);
-    z-index: 99;
+    z-index: 10;
 }
 #students > div.zoomed > div {
     width: 50%;
     height: 480px;
+    position: relative;
+}
+#students > div.zoomed > div:fullscreen {
+    width: 90%;
+    height: 100%;
+}
+#students > div.zoomed > div:-webkit-full-screen {
+    width: 90%;
+    height: 100%;
+}
+#students > div.zoomed > div:-moz-full-screen {
+    width: 90%;
+    height: 100%;
+}
+#students > div.zoomed > div:-ms-fullscreen {
+    width: 90%;
+    height: 100%;
+}
+.fullscreen {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100px;
+    margin-left: -50px;
+    z-index: 11;
+}
+#students > div.zoomed .fullscreen {
+    display: block;
+}
+#students > div.zoomed :fullscreen .fullscreen {
+    display: none;
+}
+#students > div.zoomed :-moz-full-screen .fullscreen {
+    display: none;
+}
+#students > div.zoomed :-webkit-full-screen .fullscreen {
+    display: none;
+}
+#students > div.zoomed :-ms-fullscreen .fullscreen {
+    display: none;
 }
 button.zoom {
     position: absolute;

@@ -31,6 +31,17 @@ window.addEventListener('load', function studentController () {
       zoomed = connId
     })
 
+    $('#students').on('click', 'div.zoomed button.fullscreen', function (evt) {
+      var elm = evt.target.parentNode
+      if (elm.requestFullscreen) {
+        elm.requestFullscreen()
+      } else if (elm.webkitRequestFullScreen) {
+        elm.webkitRequestFullScreen()
+      } else if (elm.mozRequestFullScreen) {
+        elm.mozRequestFullScreen()
+      }
+    })
+
     $('#students').on('click', 'button.zoomed', function (evt) {
       var connId = evt.target.dataset.connid
       connections[connId].forEach(function (c, i) {
@@ -56,7 +67,7 @@ window.addEventListener('load', function studentController () {
     }
 
     function subscribe (stream, connId) {
-      $('#conn' + connId).append('<div id="stream' + stream.id + '"></div>')
+      $('#conn' + connId).append('<div id="stream' + stream.id + '"><button class="fullscreen">Zoom</button></div>')
       var s = session.subscribe(stream, 'stream' + stream.id, {
         insertMode: 'append',
         width: '100%',
