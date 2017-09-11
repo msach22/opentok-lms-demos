@@ -63,17 +63,26 @@ body {
     width: 90%;
     height: 100%;
 }
-.fullscreen {
+.action-buttons {
     display: none;
     position: absolute;
+    width: 100%;
+    text-align: center;
     top: 0;
-    left: 50%;
-    width: 100px;
-    margin-left: -50px;
+    left: 0;
     z-index: 11;
 }
-#students > div.zoomed .fullscreen {
+div.zoomed .action-buttons {
     display: block;
+}
+.action-buttons buttons {
+    display: inline-block;
+}
+.fullscreen {
+    display: none;
+}
+#students > div.zoomed .fullscreen {
+    display: inline-block;
 }
 #students > div.zoomed :fullscreen .fullscreen {
     display: none;

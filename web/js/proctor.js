@@ -9,6 +9,13 @@ window.addEventListener('load', function studentController () {
   var msg = $('#message')
   var zoomed = null
 
+  function screenshot (subscriberid) {
+    if (subscribers[subscriberid]) {
+      return 'data:image/png;base64,' + subscribers[subscriberid].getImgData()
+    }
+    return null
+  }
+
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
 
@@ -31,8 +38,22 @@ window.addEventListener('load', function studentController () {
       zoomed = connId
     })
 
+    $("#students").on('click', '.screenshot', function (evt) {
+      var imgdata = screenshot(evt.target.dataset.streamid)
+      console.log('imgdata', imgdata)
+      if (imgdata != null) {
+        var l = document.createElement('a')
+        l.setAttribute('href', imgdata)
+        l.setAttribute('download', 'screenshot-' + Date.now() + '.png')
+        // evt.target.href = imgdata
+        // evt.target.download = 'screenshot-' + Date.now() + '.png'
+        l.click()
+      }
+      return false
+    })
+
     $('#students').on('click', 'div.zoomed button.fullscreen', function (evt) {
-      var elm = evt.target.parentNode
+      var elm = evt.target.parentNode.parentNode
       if (elm.requestFullscreen) {
         elm.requestFullscreen()
       } else if (elm.webkitRequestFullScreen) {
@@ -67,7 +88,13 @@ window.addEventListener('load', function studentController () {
     }
 
     function subscribe (stream, connId) {
-      $('#conn' + connId).append('<div id="stream' + stream.id + '"><button class="fullscreen">Zoom</button></div>')
+      var innerhtml = '<div id="stream' + stream.id + '">' +
+        '<div class="action-buttons">' +
+          '<button class="fullscreen">Zoom</button>' +
+          '<button class="screenshot button" data-streamid="' + stream.id + '">Screenshot</button>' +
+        '</div>' +
+      '</div>'
+      $('#conn' + connId).append(innerhtml)
       var s = session.subscribe(stream, 'stream' + stream.id, {
         insertMode: 'append',
         width: '100%',
