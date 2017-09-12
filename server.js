@@ -71,8 +71,20 @@ OT.createSession({ mediaMode: 'routed' }, (err, session) => {
     process.exit(1)
   }
 
-  // Bootstrap and start HTTP server for app
-  bootstrap(session).listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`)
-  })
+  if (!process.env.SECURE) {
+    // Bootstrap and start HTTP server for app
+    bootstrap(session).listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`)
+    })
+  } else {
+    const https = require('https')
+    const fs = require('fs')
+    const tlsOpts = {
+      key: fs.readFileSync('key.pem'),
+      cert: fs.readFileSync('cert.pem')
+    }
+    https.createServer(tlsOpts, bootstrap(session)).listen(PORT, () => {
+      console.log(`Listening on secure port ${PORT}...`)
+    })
+  }
 })

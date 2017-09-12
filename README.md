@@ -49,3 +49,9 @@ This will start the application on port `8080`. To change port, set the `PORT` e
 ```sh
 $ PORT=3000 npm start
 ```
+
+To start secure server, set the `SECURE` environment variable to some value. For example, this will start the application on HTTPS port 3000:
+
+```sh
+$ SECURE=1 PORT=3000 npm start
+```
