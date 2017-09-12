@@ -91,6 +91,7 @@ window.addEventListener('load', function studentController () {
       console.log('Token data', data)
       window.location.hash = data.id
       $('#share-url').val(window.location.href)
+      $('.navbar-brand').attr('href', window.location.href)
       launchSession(data)
     }, 'json')
       .fail(function (err) {

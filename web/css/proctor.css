@@ -40,9 +40,13 @@
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 0;
+    bottom: 5%;
     left: 0;
     z-index: 11;
+}
+.action-buttons .btn {
+    margin-left: 4px;
+    margin-right: 4px;
 }
 .stream {
     height: 240px;

@@ -90,7 +90,7 @@ window.addEventListener('load', function studentController () {
 
     function subscribe (stream, connId) {
       var innerhtml = '<div id="stream' + stream.id + '" class="stream">' +
-        '<div class="btn-group action-buttons" role="group" aria-label="Action buttons for stream">' +
+        '<div class="action-buttons">' +
           '<button type="button" class="btn btn-secondary fullscreen">Zoom</button>' +
           '<button type="button" class="btn btn-secondary screenshot" data-streamid="' + stream.id + '">Screenshot</button>' +
         '</div>' +

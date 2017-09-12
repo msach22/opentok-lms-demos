@@ -1,29 +1,14 @@
-* {
-    box-sizing: content-box;
+button, .btn {
+    cursor: pointer;
 }
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    margin: 0;
-    padding: 1rem;
+#camera-view {
+    height: 240px;
 }
-.camera-view {
-    width: 250px;
-    height: 250px;
-}
-.setup-panel {
+#other-sources {
     display: flex;
-    flex-flow: row nowrap;
-    margin: 0;
-    padding: 0;
-    flex-grow: 1;
-    justify-content: space-around;
+    flew-flow: row wrap;
 }
-.control-panel {
-    text-align: center;
-}
-#share-url {
-    width: 30rem;
-    display: inline-block;
-    text-align: center;
+#other-sources > div {
+    height: 240px;
+    width: 320px;
 }
