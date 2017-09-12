@@ -21,6 +21,8 @@ window.addEventListener('load', function studentController () {
 
     $('#students').on('click', 'button.zoom', function (evt) {
       evt.target.parentNode.classList.add('zoomed')
+      // evt.target.parentNode.classList.add('col-12')
+      // evt.target.parentNode.classList.remove('col-4')
       evt.target.classList.add('zoomed')
       evt.target.classList.remove('zoom')
       evt.target.innerText = 'Exit'
@@ -38,15 +40,12 @@ window.addEventListener('load', function studentController () {
       zoomed = connId
     })
 
-    $("#students").on('click', '.screenshot', function (evt) {
+    $('#students').on('click', '.screenshot', function (evt) {
       var imgdata = screenshot(evt.target.dataset.streamid)
-      console.log('imgdata', imgdata)
       if (imgdata != null) {
         var l = document.createElement('a')
         l.setAttribute('href', imgdata)
         l.setAttribute('download', 'screenshot-' + Date.now() + '.png')
-        // evt.target.href = imgdata
-        // evt.target.download = 'screenshot-' + Date.now() + '.png'
         l.click()
       }
       return false
@@ -72,6 +71,8 @@ window.addEventListener('load', function studentController () {
         unsubscribe(c)
       })
       evt.target.parentNode.classList.remove('zoomed')
+      // evt.target.parentNode.classList.remove('col-12')
+      // evt.target.parentNode.classList.add('col-4')
       evt.target.classList.remove('zoomed')
       evt.target.classList.add('zoom')
       evt.target.innerText = 'Zoom'
@@ -88,10 +89,10 @@ window.addEventListener('load', function studentController () {
     }
 
     function subscribe (stream, connId) {
-      var innerhtml = '<div id="stream' + stream.id + '">' +
-        '<div class="action-buttons">' +
-          '<button class="fullscreen">Zoom</button>' +
-          '<button class="screenshot button" data-streamid="' + stream.id + '">Screenshot</button>' +
+      var innerhtml = '<div id="stream' + stream.id + '" class="stream">' +
+        '<div class="btn-group action-buttons" role="group" aria-label="Action buttons for stream">' +
+          '<button type="button" class="btn btn-secondary fullscreen">Zoom</button>' +
+          '<button type="button" class="btn btn-secondary screenshot" data-streamid="' + stream.id + '">Screenshot</button>' +
         '</div>' +
       '</div>'
       $('#conn' + connId).append(innerhtml)
@@ -139,7 +140,8 @@ window.addEventListener('load', function studentController () {
       var streamId = event.stream.id
       if (!connections[id] || connections[id].length === 0) {
         connections[id] = []
-        studentsDiv.append('<div id="conn' + id + '"><button class="zoom" data-connid="' + id + '">Zoom</button></div>')
+        studentsDiv.append('<div id="conn' + id + '" class="col-4">' +
+          '<button type="button" class="btn btn-primary btn-sm zoom" data-connid="' + id + '">Zoom</button></div>')
         subscribe(event.stream, id)
       } else if (zoomed === id) {
         subscribe(event.stream, id)

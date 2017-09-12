@@ -1,46 +1,18 @@
-* {
-    box-sizing: content-box;
-}
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 16px;
-    margin: 0;
-    padding: 1rem;
-}
-#students {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-#students > div {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    width: 150px;
-    height: 150px;
-    margin: 10px;
-    padding: 10px;
-    background-color: #d6d6d6;
-    position: relative;
-    transition: all 0.5s ease-out;
-}
-#students > div > div {
-    width: 150px;
-    height: 150px;
-    margin: 0;
-    padding: 0;
-}
 #students > div.zoomed {
     position: fixed;
     margin: 0;
-    padding: 5vh 2.5vw;
+    padding: 0;
     overflow: hidden;
-    width: 95vw;
-    height: 90vh;
+    max-width: 100%;
+    width: 100vw;
+    height: 100vh;
     left: 0;
     top: 0;
-    background: rgba(255, 255, 255, 0.9);
+    background: #fff;
     z-index: 10;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 #students > div.zoomed > div {
     width: 50%;
@@ -72,11 +44,18 @@ body {
     left: 0;
     z-index: 11;
 }
+.stream {
+    height: 240px;
+}
+.zoomed .stream {
+    height: 40vh;
+}
 div.zoomed .action-buttons {
     display: block;
 }
-.action-buttons buttons {
+.action-buttons button {
     display: inline-block;
+    cursor: pointer;
 }
 .fullscreen {
     display: none;
@@ -107,7 +86,7 @@ button.zoomed {
     position: absolute;
     top: 0;
     left: 50%;
-    z-index: 2;
+    z-index: 12;
     margin-left: -50px;
     width: 100px;
     cursor: pointer;
