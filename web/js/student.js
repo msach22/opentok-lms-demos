@@ -31,7 +31,7 @@ window.addEventListener('load', function studentController () {
   })
 
   function installChromeExtension () {
-    var extUrl = 'https://chrome.google.com/webstore/detail/ibjimaenheofjdnpjplikdaccljdfmaf'
+    var extUrl = 'https://chrome.google.com/webstore/detail/fbjkpogjjhklbffmfooofjgablhmcnhn'
     if (chrome && chrome.webstore) {
       chrome.webstore.install(extUrl, function () {
         $('#chrome-ext-install').hide()
@@ -199,7 +199,7 @@ window.addEventListener('load', function studentController () {
       window.location.hash = data.id
       $('#share-url').val(window.location.href)
       $('.navbar-brand').attr('href', window.location.href)
-      OT.registerScreenSharingExtension('chrome', 'ibjimaenheofjdnpjplikdaccljdfmaf', 2)
+      OT.registerScreenSharingExtension('chrome', 'fbjkpogjjhklbffmfooofjgablhmcnhn', 2)
       checkScreenShareSupport(function () {
         launchSession(data)
       })
