@@ -1,10 +1,81 @@
-/* global OT */
+/* global OT, chrome */
 
 window.addEventListener('load', function studentController () {
   var session
-  var publisher
+  var publisherCamera
+  var publisherScreen
   var id = window.location.hash.slice(1)
-  var msg = $('#message')
+
+  function _msg (m) {
+    $('#message').text(m)
+  }
+
+  function installChromeExtension () {
+    var extUrl = 'https://chrome.google.com/webstore/detail/ibjimaenheofjdnpjplikdaccljdfmaf'
+    if (chrome && chrome.webstore) {
+      chrome.webstore.install(extUrl, function () {
+        $('#chrome-ext-install').hide()
+        $('#share-screen').removeClass('invisible')
+        _msg('Chrome screenshare extension installed')
+      }, function (err) {
+        console.log(err)
+        _msg('Please install the screen sharing extension and refresh the page.')
+      })
+    }
+  }
+
+  function checkScreenShareSupport (callback) {
+    OT.checkScreenSharingCapability(function (res) {
+      var screenshareEnabled = false
+      if (!res.supported || res.extensionRegistered === false) {
+        _msg('Screensharing is not supported')
+      } else if (res.extensionRequired === 'chrome' && res.extensionInstalled === false) {
+        console.log('Chrome Screenshare required')
+        $('#chrome-ext-install').show()
+      } else {
+        console.log('Screenshare available')
+        $('#chrome-ext-install').hide()
+        $('#share-screen').removeClass('invisible')
+        screenshareEnabled = true
+      }
+      // Trigger callback
+      callback(screenshareEnabled, res)
+    })
+  }
+
+  var createPublisherScreenshare = function () {
+    var opts = {
+      audioSource: null,
+      insertMode: 'append',
+      publishAudio: false,
+      videoSource: 'screen',
+      width: '100%',
+      height: '100%'
+    }
+
+    _msg('Setting up screenshare...')
+
+    publisherScreen = OT.initPublisher('screen-view', opts, function (err) {
+      if (err) {
+        console.log(err)
+        _msg('Error getting access to screen share.')
+        return
+      }
+      _msg('Screen sharing started.')
+      $('#share-screen').attr('disabled', 'disabled')
+      $('#publish').removeAttr('disabled')
+    })
+
+    publisherScreen.on('mediaStopped', function () {
+      _msg('Screen sharing stopped')
+    })
+  }
+
+  $('#share-screen').on('click', createPublisherScreenshare)
+
+  $('#chrome-ext-install').on('click', function (evt) {
+    installChromeExtension()
+  })
 
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
@@ -22,17 +93,17 @@ window.addEventListener('load', function studentController () {
 
     session.connect(data.token, function (error) {
       if (error) {
-        alert('Error connecting to OpenTok session')
-        msg.text('Error')
+        _msg('Error connecting to OpenTok session')
+        _msg('Error')
         console.log(error)
         return
       }
       console.log('Connected to session', data.sessionId)
-      msg.text('Connected to OpenTok')
+      _msg('Connected to OpenTok')
       $('.start-camera').removeAttr('disabled')
 
       $('#start-camera').on('click', function (evt) {
-        publisher = OT.initPublisher('camera-view', {
+        publisherCamera = OT.initPublisher('camera-view', {
           audioSource: null,
           videoSource: $('#camera-list').val(),
           height: '100%',
@@ -41,7 +112,7 @@ window.addEventListener('load', function studentController () {
           name: $('#camera-name').val()
         }, function (err) {
           if (err) {
-            alert('Error getting feed for camera 1')
+            _msg('Error getting feed for camera 1')
             console.log(err)
             return
           }
@@ -51,29 +122,42 @@ window.addEventListener('load', function studentController () {
       })
 
       $('#publish').on('click', function (evt) {
-        session.publish(publisher, function (err) {
-          if (err) {
-            alert('Unable to publish camera 1')
-            console.log(err)
-            return
-          }
-          $('#publish').attr('disabled', 'disabled')
-          console.log('Published camera')
-          msg.text('Live')
-        })
+        if (publisherCamera != null) {
+          session.publish(publisherCamera, function (err) {
+            if (err) {
+              _msg('Unable to publish camera 1')
+              console.log(err)
+              return
+            }
+            console.log('Published camera')
+            _msg('Live')
+          })
+        }
+        if (publisherScreen != null) {
+          session.publish(publisherScreen, function (err) {
+            if (err) {
+              _msg('Unable to publish screen')
+              console.log(err)
+              return
+            }
+            $('#publish').attr('disabled', 'disabled')
+            console.log('Published camera')
+            _msg('Live')
+          })
+        }
       })
     })
   }
 
   OT.getDevices(function (err, devices) {
     if (err) {
-      alert('Error getting list of media devices')
+      _msg('Error getting list of media devices')
       console.log(err)
       return
     }
     console.log('MediaDevices', devices)
     if (devices.length < 1) {
-      alert('No media devices available')
+      _msg('No media devices available')
       console.error('No media devices available')
       return
     }
@@ -92,10 +176,13 @@ window.addEventListener('load', function studentController () {
       window.location.hash = data.id
       $('#share-url').val(window.location.href)
       $('.navbar-brand').attr('href', window.location.href)
-      launchSession(data)
+      OT.registerScreenSharingExtension('chrome', 'ibjimaenheofjdnpjplikdaccljdfmaf', 2)
+      checkScreenShareSupport(function () {
+        launchSession(data)
+      })
     }, 'json')
       .fail(function (err) {
-        alert('Error getting token')
+        _msg('Error getting token')
         console.log(err)
       })
   })

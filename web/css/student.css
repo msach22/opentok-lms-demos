@@ -1,10 +1,16 @@
+.h2, h2 {
+    font-size: 1.5rem;
+}
+.h3, h3 {
+    font-size: 1.25rem;
+}
 button, .btn {
     cursor: pointer;
 }
 button:disabled, .btn:disabled {
     cursor: not-allowed;
 }
-#camera-view {
+.camera-view {
     height: 240px;
 }
 #other-sources {

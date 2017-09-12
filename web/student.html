@@ -8,6 +8,7 @@
     <title>OpenTok Proctoring demo - Student</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link href="/css/student.css" rel="stylesheet" type="text/css">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ibjimaenheofjdnpjplikdaccljdfmaf">
 </head>
 
 <body>
@@ -45,8 +46,12 @@
                         <input id="camera-name" class="camera form-control" type="text" placeholder="Add a name for this stream">
                     </div>
                     <div class="form-group">
-                        <button type="button" id="start-camera" class="btn btn-secondary start-camera camera" disabled="disabled">Start Video</button>
-                        <button type="button" class="btn btn-primary" id="publish" disabled="disabled">Publish</button>
+                        <button type="button" id="start-camera" class="btn btn-outline-primary start-camera camera" disabled="disabled">Start Video</button>
+                        <button id="share-screen" type="button" class="btn btn-outline-primary invisible">Share screen</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="chrome-ext-install" type="button" class="btn btn-outline-secondary btn-block">Install Chrome Extension</button>
+                        <button type="button" class="btn btn-primary btn-block" id="publish" disabled="disabled">Publish</button>
                     </div>
                     <hr>
                     <div class="form-group">
@@ -57,7 +62,10 @@
             </div>
             <div class="col-3">
                 <h2>Your view</h2>
+                <h3>Camera</h3>
                 <div id="camera-view" class="camera-view"></div>
+                <h3>Screen</h3>
+                <div id="screen-view" class="camera-view"></div>
             </div>
             <div class="col-6">
                 <h2>Other video sources</h2>
