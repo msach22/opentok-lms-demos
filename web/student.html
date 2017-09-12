@@ -38,34 +38,54 @@
                 <form>
                     <h2>Video source</h2>
                     <div class="form-group">
-                        <label for="camera-list">Choose camera</label>
-                        <select id="camera-list" class="camera form-control"></select>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="videoType" id="videoType-camera" value="camera" checked>
+                                Camera
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="radio" name="videoType" id="videoType-screen" value="screen">
+                                Screen
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="camera-name">Name of source</label>
                         <input id="camera-name" class="camera form-control" type="text" placeholder="Add a name for this stream">
                     </div>
-                    <div class="form-group">
-                        <button type="button" id="start-camera" class="btn btn-outline-primary start-camera camera" disabled="disabled">Start Video</button>
-                        <button id="share-screen" type="button" class="btn btn-outline-primary invisible">Share screen</button>
+                    <div id="select-camera">
+                        <div class="form-group">
+                            <label for="camera-list">Choose camera</label>
+                            <select id="camera-list" class="camera form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="start-camera" class="btn btn-outline-primary btn-block start-camera camera" disabled="disabled">Start Video</button>
+                        </div>
+                    </div>
+                    <div id="select-screen" class="form-group">
+                        <button id="chrome-ext-install" type="button" class="btn btn-outline-secondary btn-block">Install Chrome Extension</button>
+                        <button id="share-screen" type="button" class="btn btn-outline-primary btn-block invisible">Share screen</button>
                     </div>
                     <div class="form-group">
-                        <button id="chrome-ext-install" type="button" class="btn btn-outline-secondary btn-block">Install Chrome Extension</button>
                         <button type="button" class="btn btn-primary btn-block" id="publish" disabled="disabled">Publish</button>
                     </div>
                     <hr>
                     <div class="form-group">
-                            <label for="share-url">Join this URL to publish another video source:</label>
-                            <input id="share-url" type="text" class="form-control" readonly>
+                        <label for="share-url">Join this URL to publish another video source:</label>
+                        <input id="share-url" type="text" class="form-control" readonly>
                     </div>
                 </form>
             </div>
             <div class="col-3">
                 <h2>Your view</h2>
-                <h3>Camera</h3>
-                <div id="camera-view" class="camera-view"></div>
-                <h3>Screen</h3>
-                <div id="screen-view" class="camera-view"></div>
+                <div id="camera-view" class="camera-view">
+                    <h3>Camera</h3>
+                </div>
+                <div id="screen-view" class="camera-view">
+                    <h3>Screen</h3>
+                </div>
             </div>
             <div class="col-6">
                 <h2>Other video sources</h2>

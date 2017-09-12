@@ -10,6 +10,26 @@ window.addEventListener('load', function studentController () {
     $('#message').text(m)
   }
 
+  function toggleSourceControl (value) {
+    if (value === 'camera') {
+      $('#select-camera').show()
+      $('#camera-view').show()
+      $('#select-screen').hide()
+      $('#screen-view').hide()
+    } else if (value === 'screen') {
+      $('#select-camera').hide()
+      $('#camera-view').hide()
+      $('#select-screen').show()
+      $('#screen-view').show()
+    }
+  }
+
+  toggleSourceControl($('input[type=radio][name=videoType]').val())
+
+  $('input[type=radio][name=videoType]').change(function () {
+    toggleSourceControl(this.value)
+  })
+
   function installChromeExtension () {
     var extUrl = 'https://chrome.google.com/webstore/detail/ibjimaenheofjdnpjplikdaccljdfmaf'
     if (chrome && chrome.webstore) {
@@ -50,7 +70,8 @@ window.addEventListener('load', function studentController () {
       publishAudio: false,
       videoSource: 'screen',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      name: $('#camera-name').val()
     }
 
     _msg('Setting up screenshare...')
@@ -65,6 +86,7 @@ window.addEventListener('load', function studentController () {
       $('#share-screen').attr('disabled', 'disabled')
       $('#publish').removeAttr('disabled')
     })
+    $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
 
     publisherScreen.on('mediaStopped', function () {
       _msg('Screen sharing stopped')
@@ -116,6 +138,7 @@ window.addEventListener('load', function studentController () {
             console.log(err)
             return
           }
+          $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
           $('#publish').removeAttr('disabled')
           $('.camera').attr('disabled', 'disabled')
         })
