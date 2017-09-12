@@ -1,12 +1,15 @@
 button, .btn {
     cursor: pointer;
 }
+button:disabled, .btn:disabled {
+    cursor: not-allowed;
+}
 #camera-view {
     height: 240px;
 }
 #other-sources {
     display: flex;
-    flew-flow: row wrap;
+    flex-flow: row wrap;
 }
 #other-sources > div {
     height: 240px;
