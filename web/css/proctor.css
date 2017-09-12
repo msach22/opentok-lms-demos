@@ -15,8 +15,8 @@
     flex-wrap: wrap;
 }
 #students > div.zoomed > div {
-    width: 50%;
-    height: 480px;
+    width: 50vw;
+    height: 50vh;
     position: relative;
 }
 #students > div.zoomed > div:fullscreen {

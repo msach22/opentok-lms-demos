@@ -21,8 +21,6 @@ window.addEventListener('load', function studentController () {
 
     $('#students').on('click', 'button.zoom', function (evt) {
       evt.target.parentNode.classList.add('zoomed')
-      // evt.target.parentNode.classList.add('col-12')
-      // evt.target.parentNode.classList.remove('col-4')
       evt.target.classList.add('zoomed')
       evt.target.classList.remove('zoom')
       evt.target.innerText = 'Exit'
@@ -89,7 +87,7 @@ window.addEventListener('load', function studentController () {
     }
 
     function subscribe (stream, connId) {
-      var innerhtml = '<div id="stream' + stream.id + '" class="stream">' +
+      var innerhtml = '<div id="stream' + stream.id + '" class="stream type-' + stream.videoType + '">' +
         '<div class="action-buttons">' +
           '<button type="button" class="btn btn-secondary fullscreen">Zoom</button>' +
           '<button type="button" class="btn btn-secondary screenshot" data-streamid="' + stream.id + '">Screenshot</button>' +
@@ -99,8 +97,7 @@ window.addEventListener('load', function studentController () {
       var s = session.subscribe(stream, 'stream' + stream.id, {
         insertMode: 'append',
         width: '100%',
-        height: '100%',
-        fitMode: 'cover'
+        height: '100%'
       }, function (err) {
         if (err) {
           alert('Error subscribing to stream')
