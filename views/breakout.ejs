@@ -5,20 +5,26 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Student - Room
+  <title>Breakout room
     <%= room.roomId %>
   </title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
     crossorigin="anonymous">
   <link href="/css/app.css" rel="stylesheet" type="text/css">
-  <link href="/css/student.css" rel="stylesheet" type="text/css">
   <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/fbjkpogjjhklbffmfooofjgablhmcnhn">
+  <style type="text/css">
+    #subscribers {
+      width: 640px;
+      height: 480px;
+      position: relative;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container-fluid">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a class="navbar-brand" href="/student/<%= room.roomId %>">Student</a>
+      <a class="navbar-brand" href="/breakout/<%= room.roomId %>">Breakout Room</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
         aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -39,27 +45,31 @@
         <div id="message" class="alert alert-primary" role="alert">Offline</div>
       </div>
     </div>
-    <div class="row justify-content-center">
-        <div class="col-2">
-          <a href="/breakout/<%= room.roomId %>" class="btn btn-outline-primary btn-block">Breakout</a>
-        </div>
+
+    <div class="row">
+      <div class="col">
+        <a href="/student/<%= room.roomId %>" class="btn btn-outline-primary btn-block">&larr; Back to classroom</a>
+      </div>
       <div class="col-6">
         <form id="join-form" class="form-inline">
           <div class="input-group mb-2 mr-sm-2 mb-sm-0">
             <div class="input-group-addon">Name</div>
             <input id="user-name" type="text" class="form-control" placeholder="Your name here" autofocus>
           </div>
-          <button id="join-room" type="submit" class="btn btn-primary">Join Classroom</button>
+          <button id="join-room" type="submit" class="btn btn-primary">Join Breakout</button>
         </form>
       </div>
     </div>
-    <div class="row justify-content-center">
-        <div id="teacher-camera" class="col camera-view"></div>
-        <div id="student-stage" class="col camera-view"></div>
-        <div id="self-view" class="col camera-view"></div>
-    </div>
+    <hr>
     <div class="row">
-      <div id="teacher-screen" class="col screen-view"></div>
+      <div id="self-view" class="col-3">
+        <!-- Own video is shown here -->
+      </div>
+      <div class="col">
+        <div id="subscribers">
+          <!-- Subscribed videos appear here -->
+        </div>
+      </div>
     </div>
   </div>
 
@@ -72,5 +82,6 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
     crossorigin="anonymous"></script>
   <script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
-  <script src="/js/student.js"></script>
+  <script src="/vendor/opentok-layout.js"></script>
+  <script src="/js/breakout.js"></script>
 </body>

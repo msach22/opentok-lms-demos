@@ -173,9 +173,6 @@ app.get('/student/:roomId', getRoom, (req, res, next) => {
 })
 
 app.get('/breakout/:roomId', getRoom, (req, res, next) => {
-  if (req.room.students && req.room.students.length >= 5) {
-    return res.render('breakout-full', { room: req.room })
-  }
   res.render('breakout', { room: req.room })
 })
 
