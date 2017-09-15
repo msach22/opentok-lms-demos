@@ -54,11 +54,48 @@ function createToken (sessionId, userName, userType = 'student', role = 'publish
   }
 }
 
+function createRoom () {
+  return new Promise(function (resolve, reject) {
+    const room = {
+      roomId: createId(),
+      sessionId: null,
+      breakoutSessionId: null,
+      students: []
+    }
+    createSession()
+      .then(session => {
+        room.sessionId = session.sessionId
+        return createSession()
+      })
+      .then(session => {
+        room.breakoutSessionId = session.sessionId
+        classRooms[room.roomId] = room
+        return resolve(room)
+      })
+      .catch(reject)
+  })
+}
+
+function getRoom (req, res, next) {
+  const room = classRooms[req.params.roomId || req.query.roomId]
+  if (room) {
+    req.room = room
+    next()
+  } else {
+    const _err = new Error('Room not found')
+    _err.status = 404
+    next(_err)
+  }
+}
+
 // Create expressJS app instance
 const app = express()
 
-// Mount the `./web` dir to web-root as static.
-app.use('/', express.static('./web'))
+// Set view engine
+app.set('view engine', 'ejs')
+
+// Mount the `./static` dir to web-root as static.
+app.use('/', express.static('./static'))
 
 app.get('/room', (req, res, next) => {
   let roomId = req.query.id
@@ -72,20 +109,8 @@ app.get('/room', (req, res, next) => {
     })
   }
   // If room doesn't exist, generate session Ids
-  room = {
-    roomId: createId(),
-    sessionId: null,
-    breakoutSessionId: null,
-    students: []
-  }
-  createSession()
-    .then(session => {
-      room.sessionId = session.sessionId
-      return createSession()
-    })
-    .then(session => {
-      room.breakoutSessionId = session.sessionId
-      classRooms[room.roomId] = room
+  createRoom()
+    .then(room => {
       return res.status(200).json({
         roomId: room.roomId,
         sessionId: room.sessionId,
@@ -96,18 +121,6 @@ app.get('/room', (req, res, next) => {
     })
     .catch(next)
 })
-
-function getRoom (req, res, next) {
-  const room = classRooms[req.params.roomId]
-  if (room) {
-    req.room = room
-    next()
-  } else {
-    const _err = new Error('Room not found')
-    _err.status = 404
-    next(_err)
-  }
-}
 
 app.get('/token/:roomId/student', getRoom, (req, res, next) => {
   var name = req.query.name || createId()
@@ -147,6 +160,43 @@ app.get('/token/:roomId/breakout', getRoom, (req, res, next) => {
         breakoutSessionId: req.room.breakoutSessionId,
         apiKey: OPENTOK_API_KEY
       })
+    })
+    .catch(next)
+})
+
+app.get('/teacher/:roomId', getRoom, (req, res, next) => {
+  res.render('teacher', { room: req.room })
+})
+
+app.get('/student/:roomId', getRoom, (req, res, next) => {
+  res.render('student', { room: req.room })
+})
+
+app.get('/breakout/:roomId', getRoom, (req, res, next) => {
+  if (req.room.students && req.room.students.length >= 5) {
+    return res.render('breakout-full', { room: req.room })
+  }
+  res.render('breakout', { room: req.room })
+})
+
+app.get('/teacher', (req, res, next) => {
+  if (req.query.roomId) {
+    return res.redirect(`/teacher/${req.query.roomId.trim()}`)
+  }
+  createRoom()
+    .then(room => {
+      return res.redirect(`/teacher/${room.roomId}`)
+    })
+    .catch(next)
+})
+
+app.get('/student', (req, res, next) => {
+  if (req.query.roomId) {
+    return res.redirect(`/student/${req.query.roomId.trim()}`)
+  }
+  createRoom()
+    .then(room => {
+      return res.redirect(`/student/${room.roomId}`)
     })
     .catch(next)
 })
