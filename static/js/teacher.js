@@ -8,16 +8,10 @@ window.addEventListener('load', function studentController () {
   }
   var stage = {}
   var students = {}
+  var isLive = false
 
   function _msg (m) {
-    $('#message').text(m)
-  }
-
-  function screenshot (subscriberid) {
-    if (students[subscriberid]) {
-      return 'data:image/png;base64,' + students[subscriberid].getImgData()
-    }
-    return null
+    $('#message').html(m)
   }
 
   function installChromeExtension () {
@@ -25,11 +19,12 @@ window.addEventListener('load', function studentController () {
     if (chrome && chrome.webstore) {
       chrome.webstore.install(extUrl, function () {
         $('#chrome-ext-install').hide()
-        $('#share-screen').removeClass('invisible')
+        $('#start-screen').show()
         _msg('Chrome screenshare extension installed')
       }, function (err) {
         console.log(err)
-        _msg('Please install the screen sharing extension and refresh the page.')
+        _msg('Please install the screen sharing from ' +
+        '<a href="' + extUrl + '" target="_blank">this link</a> and reload this page')
       })
     }
   }
@@ -86,6 +81,9 @@ window.addEventListener('load', function studentController () {
       publishers.screen.on('mediaStopped', function () {
         publishers.screen = null
         $('#start-screen').removeAttr('disabled')
+        if (!isLive && publishers.camera == null) {
+          $('#publish').attr('disabled', 'disabled')
+        }
         _msg('Screen sharing stopped')
       })
       return false
@@ -95,8 +93,6 @@ window.addEventListener('load', function studentController () {
       evt.preventDefault()
       var opts = {
         insertMode: 'append',
-        // publishAudio: true,
-        // videoSource: 'camera',
         width: '100%',
         height: '100%',
         name: 'Teacher camera'
@@ -123,39 +119,21 @@ window.addEventListener('load', function studentController () {
       return false
     })
 
-    $('#students').on('click', '.screenshot', function (evt) {
-      var imgdata = screenshot(evt.target.dataset.streamid)
-      if (imgdata != null) {
-        var l = document.createElement('a')
-        l.setAttribute('href', imgdata)
-        l.setAttribute('download', 'screenshot-' + Date.now() + '.png')
-        l.click()
-      }
-      return false
-    })
-
-    $('#students').on('click', 'button.fullscreen', function (evt) {
-      var elm = evt.target.parentNode.parentNode
-      if (elm.requestFullscreen) {
-        elm.requestFullscreen()
-      } else if (elm.webkitRequestFullScreen) {
-        elm.webkitRequestFullScreen()
-      } else if (elm.mozRequestFullScreen) {
-        elm.mozRequestFullScreen()
-      }
-    })
-
     $('#publish').on('click', function (evt) {
       evt.preventDefault()
       if (publishers.camera != null) {
         session.publish(publishers.camera, function (err) {
           if (err) {
             _msg('Unable to publish camera')
+            $('#start-camera').removeAttr('disabled')
             console.log(err)
             return
           }
+          $('#start-camera').attr('disabled', 'disabled')
+          $('#start-screen').attr('disabled', 'disabled')
           $('#publish').attr('disabled', 'disabled')
           console.log('Published camera')
+          isLive = true
           _msg('Live')
         })
       }
@@ -163,25 +141,29 @@ window.addEventListener('load', function studentController () {
         session.publish(publishers.screen, function (err) {
           if (err) {
             _msg('Unable to publish screen')
+            $('#start-screen').removeAttr('disabled')
             console.log(err)
             return
           }
+          $('#start-camera').attr('disabled', 'disabled')
+          $('#start-screen').attr('disabled', 'disabled')
           $('#publish').attr('disabled', 'disabled')
           console.log('Published screen')
+          isLive = true
           _msg('Live')
         })
       }
+
       return false
     })
 
     function subscribe (stream, connId) {
-      var innerhtml = '<div id="stream-' + stream.id + '" class="stream type-' + stream.videoType + '">' +
+      var innerhtml = '<div id="stream-' + stream.id + '" class="stream col-3 type-' + stream.videoType + '">' +
         '<div class="action-buttons">' +
-          '<button type="button" class="btn btn-secondary fullscreen">Zoom</button>' +
-          '<button type="button" class="btn btn-secondary screenshot" data-streamid="' + stream.id + '">Screenshot</button>' +
+          '<button type="button" class="btn btn-secondary stage-add">Add to stage</button>' +
         '</div>' +
       '</div>'
-      $('#conn' + connId).append(innerhtml)
+      $('#students').append(innerhtml)
       var s = session.subscribe(stream, 'stream-' + stream.id, {
         insertMode: 'append',
         width: '100%',

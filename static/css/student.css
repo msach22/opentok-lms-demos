@@ -1,12 +1,6 @@
-
 .camera-view {
     height: 240px;
 }
-#other-sources {
-    display: flex;
-    flex-flow: row wrap;
-}
-#other-sources > div {
-    height: 240px;
-    width: 320px;
+#teacher-screen.has-stream {
+    height: 540px;
 }

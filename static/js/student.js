@@ -1,173 +1,125 @@
-/* global OT, chrome */
+/* global OT, room */
 
 window.addEventListener('load', function studentController () {
   var session
   var publisherCamera
-  var publisherScreen
-  var id = window.location.hash.slice(1)
+  var students = {}
 
   function _msg (m) {
     $('#message').text(m)
   }
 
-  function toggleSourceControl (value) {
-    if (value === 'camera') {
-      $('#select-camera').show()
-      $('#camera-view').show()
-      $('#select-screen').hide()
-      $('#screen-view').hide()
-    } else if (value === 'screen') {
-      $('#select-camera').hide()
-      $('#camera-view').hide()
-      $('#select-screen').show()
-      $('#screen-view').show()
-    }
-  }
-
-  toggleSourceControl($('input[type=radio][name=videoType]').val())
-
-  $('input[type=radio][name=videoType]').change(function () {
-    toggleSourceControl(this.value)
-  })
-
-  function installChromeExtension () {
-    var extUrl = 'https://chrome.google.com/webstore/detail/fbjkpogjjhklbffmfooofjgablhmcnhn'
-    if (chrome && chrome.webstore) {
-      chrome.webstore.install(extUrl, function () {
-        $('#chrome-ext-install').hide()
-        $('#share-screen').removeClass('invisible')
-        _msg('Chrome screenshare extension installed')
-      }, function (err) {
-        console.log(err)
-        _msg('Please install the screen sharing extension and refresh the page.')
-      })
-    }
-  }
-
-  function checkScreenShareSupport (callback) {
-    OT.checkScreenSharingCapability(function (res) {
-      var screenshareEnabled = false
-      if (!res.supported || res.extensionRegistered === false) {
-        _msg('Screensharing is not supported')
-      } else if (res.extensionRequired === 'chrome' && res.extensionInstalled === false) {
-        console.log('Chrome Screenshare required')
-        $('#chrome-ext-install').show()
-      } else {
-        console.log('Screenshare available')
-        $('#chrome-ext-install').hide()
-        $('#share-screen').removeClass('invisible')
-        screenshareEnabled = true
-      }
-      // Trigger callback
-      callback(screenshareEnabled, res)
-    })
-  }
-
-  var createPublisherScreenshare = function () {
-    var opts = {
-      audioSource: null,
-      insertMode: 'append',
-      publishAudio: false,
-      videoSource: 'screen',
-      width: '100%',
-      height: '100%',
-      name: $('#camera-name').val()
-    }
-
-    _msg('Setting up screenshare...')
-
-    publisherScreen = OT.initPublisher('screen-view', opts, function (err) {
-      if (err) {
-        console.log(err)
-        _msg('Error getting access to screen share.')
-        return
-      }
-      _msg('Screen sharing started.')
-      $('#share-screen').attr('disabled', 'disabled')
-      $('#publish').removeAttr('disabled')
-    })
-    $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
-
-    publisherScreen.on('mediaStopped', function () {
-      _msg('Screen sharing stopped')
-    })
-  }
-
-  $('#share-screen').on('click', createPublisherScreenshare)
-
-  $('#chrome-ext-install').on('click', function (evt) {
-    installChromeExtension()
-  })
-
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
 
+    function subscribeTeacherCamera (stream) {
+      session.subscribe(stream, 'teacher-camera', {
+        insertMode: 'append',
+        width: '100%',
+        height: '100%'
+      }, function (err) {
+        if (err) {
+          console.log('Error subscribing to teacher\'s camera stream', err)
+          _msg('Error subscribing to teacher\'s camera stream')
+          $('#teacher-camera').addClass('has-stream')
+        }
+      })
+    }
+
+    function subscribeTeacherScreen (stream) {
+      session.subscribe(stream, 'teacher-screen', {
+        insertMode: 'append',
+        width: '100%',
+        height: '100%'
+      }, function (err) {
+        if (err) {
+          console.log('Error subscribing to teacher\'s screen stream', err)
+          _msg('Error subscribing to teacher\'s screen stream')
+        }
+        $('#teacher-screen').addClass('has-stream')
+      })
+    }
+
+    function parseConnectionData (conn) {
+      var data = null
+      try {
+        data = JSON.parse(conn.data)
+        console.log('Parsed connection data', data)
+      } catch (e) {
+        console.log('Error parsing stream connection data', e)
+      }
+      return data
+    }
+
     session.on('streamCreated', function (event) {
       console.log('streamCreated', event)
-      if (event.stream.connection.data === id) {
-        session.subscribe(event.stream, 'other-sources', {
-          insertMode: 'append',
-          width: '200px',
-          height: '150px'
-        })
+      var data = parseConnectionData(event.stream.connection)
+      if (data == null) {
+        return
+      }
+      if (data.userType === 'teacher') {
+        switch (event.stream.videoType) {
+          case 'camera':
+            subscribeTeacherCamera(event.stream)
+            break
+          case 'screen':
+            subscribeTeacherScreen(event.stream)
+            break
+        }
+      } else if (data.userType === 'student') {
+        students[event.stream.id] = event.stream
+      }
+    })
+
+    session.on('streamDestroyed', function (event) {
+      var data = parseConnectionData(event.stream.connection)
+      if (data == null) {
+        return
+      }
+      if (data.userType === 'teacher') {
+        switch (event.stream.videoType) {
+          case 'camera':
+            $('#teacher-camera').removeClass('has-stream')
+            break
+          case 'screen':
+            $('#teacher-screen').removeClass('has-stream')
+        }
+      } else if (data.userType === 'student') {
+        students[event.stream.id] = null
+        delete students[event.stream.id]
       }
     })
 
     session.connect(data.token, function (error) {
       if (error) {
         _msg('Error connecting to OpenTok session')
-        _msg('Error')
         console.log(error)
         return
       }
       console.log('Connected to session', data.sessionId)
       _msg('Connected to OpenTok')
-      $('.start-camera').removeAttr('disabled')
 
-      $('#start-camera').on('click', function (evt) {
-        publisherCamera = OT.initPublisher('camera-view', {
-          audioSource: null,
-          videoSource: $('#camera-list').val(),
-          height: '100%',
-          width: '100%',
-          insertMode: 'append',
-          name: $('#camera-name').val()
-        }, function (err) {
+      publisherCamera = OT.initPublisher('self-view', {
+        resolution: '320x240',
+        height: '100%',
+        width: '100%',
+        insertMode: 'append',
+        name: $('#user-name').val()
+      }, function (err) {
+        if (err) {
+          _msg('Error getting feed for camera 1')
+          console.log(err)
+          return
+        }
+        session.publish(publisherCamera, function (err) {
           if (err) {
-            _msg('Error getting feed for camera 1')
+            _msg('Unable to publish camera')
             console.log(err)
             return
           }
-          $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
-          $('#publish').removeAttr('disabled')
-          $('.camera').attr('disabled', 'disabled')
+          console.log('Published camera')
+          _msg('Live')
         })
-      })
-
-      $('#publish').on('click', function (evt) {
-        if (publisherCamera != null) {
-          session.publish(publisherCamera, function (err) {
-            if (err) {
-              _msg('Unable to publish camera 1')
-              console.log(err)
-              return
-            }
-            console.log('Published camera')
-            _msg('Live')
-          })
-        }
-        if (publisherScreen != null) {
-          session.publish(publisherScreen, function (err) {
-            if (err) {
-              _msg('Unable to publish screen')
-              console.log(err)
-              return
-            }
-            $('#publish').attr('disabled', 'disabled')
-            console.log('Published camera')
-            _msg('Live')
-          })
-        }
       })
     })
   }
@@ -185,28 +137,19 @@ window.addEventListener('load', function studentController () {
       return
     }
 
-    var videoDevices = devices.filter(function (d) {
-      return d.kind === 'videoInput'
-    }).map(function (d, i) {
-      var deviceLabel = d.label.replace(/_/g, ' ').split(' (')[0] || 'Camera ' + (i + 1)
-      return '<option value="' + d.deviceId + '">' + deviceLabel + '</option>'
-    })
-
-    $('#camera-list').append(videoDevices.join(''))
-
-    $.get('/token?id=' + id, function (data) {
-      console.log('Token data', data)
-      window.location.hash = data.id
-      $('#share-url').val(window.location.href)
-      $('.navbar-brand').attr('href', window.location.href)
-      OT.registerScreenSharingExtension('chrome', 'fbjkpogjjhklbffmfooofjgablhmcnhn', 2)
-      checkScreenShareSupport(function () {
+    $('#join-room').removeAttr('disabled')
+    $('#join-room').on('click', function (evt) {
+      evt.preventDefault()
+      $.get('/token/' + room.roomId + '/student?name=' + $('#user-name').val(), function (data) {
+        console.log('Token data', data)
+        $('#join-form').hide()
         launchSession(data)
-      })
-    }, 'json')
-      .fail(function (err) {
-        _msg('Error getting token')
-        console.log(err)
-      })
+      }, 'json')
+        .fail(function (err) {
+          _msg('Error getting token')
+          console.log(err)
+        })
+      return false
+    })
   })
 })

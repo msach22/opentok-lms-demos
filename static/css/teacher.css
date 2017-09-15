@@ -1,3 +1,15 @@
 #stage > div {
     height: 240px;
 }
+.stream {
+    height: 240px;
+    position: relative;
+}
+.action-buttons {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+}
