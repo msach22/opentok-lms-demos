@@ -229,7 +229,8 @@ window.addEventListener('load', function studentController () {
       var s = session.subscribe(stream, 'stream-' + stream.id, {
         insertMode: 'append',
         width: '100%',
-        height: '100%'
+        height: '100%',
+        style: { buttonDisplayMode: 'off' }
       }, function (err) {
         if (err) {
           alert('Error subscribing to stream')
