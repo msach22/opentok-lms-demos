@@ -1,26 +1,33 @@
-# OpenTok proctoring demo
+# OpenTok tutoring demo
 
-A simple OpenTok demo showing a proctoring setup where each participant publishes 3 video feeds simultaneously.
+A simple OpenTok demo showing a tutoring setup where 1 teacher is connected to N students in a classroom. Students see only the teacher. Teacher can bring any student on the "stage" so that other students see and hear that student. Students also have a breakout room where they can discuss among each other.
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kaustavdm/opentok-lms-demos/tree/proctoring)
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kaustavdm/opentok-lms-demos/tree/tutoring)
 
 ## Features
 
 ### Roles
 
-- Proctor: Moderator, subscribe only (Only subscribes to students’ streams)
+- Teacher: Moderator - Publishes camera and/or screen.
 - Students: Publish only
 
 ### Students
 
-- Students publish 2 camera feeds and 1 screen feed
-- Students join and start publishing their feed
-- Students do not subscribe to proctor or to each other
+- Students publish their camera
+- Students subscribe to the teacher and any other student who has been brought on stage.
+- Students do not subscribe to proctor or to each other.
 
-### Proctor
+### Teacher
 
+- Teacher publishes their camera and/or screen.
 - Sees multiple students displayed in a thumbnail grid
-- Click on each student feed to maximize
+- Can add or remove students on stage.
+
+### Breakout room
+
+- Students can temporarily leave the classroom and enter a breakout room
+- Breakout room can handle max 5 students in full-mesh in this demo.
+- Students can get back to the classroom from the breakout room.
 
 ## Install
 

@@ -1,7 +1,7 @@
 {
-  "name": "opentok-lms-demo-proctoring",
+  "name": "opentok-lms-demo-tutoring",
   "version": "0.0.1-dev",
-  "description": "OpenTok demo for a proctoring setup",
+  "description": "OpenTok demo for a tutoring setup",
   "private": true,
   "scripts": {
     "start": "node server",
