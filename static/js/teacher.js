@@ -249,10 +249,22 @@ window.addEventListener('load', function studentController () {
       students[stream.id] = s
     }
 
+    session.on('signal:onStage', function (evt) {
+      Object.keys(stage).forEach(function (k) {
+        session.signal({
+          to: evt.from,
+          type: 'stageAdd',
+          data: k
+        })
+      })
+    })
+
     session.on('streamDestroyed', function (event) {
       console.log('Stream destroyed', event)
       students[event.stream.id] = null
+      delete students[event.stream.id]
       stage[event.stream.id] = null
+      delete stage[event.stream.id]
       $('#stream-' + event.stream.id).remove()
       $('#stage-' + event.stream.id).remove()
     })

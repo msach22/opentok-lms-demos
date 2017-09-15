@@ -159,6 +159,7 @@ window.addEventListener('load', function studentController () {
           }
           console.log('Published camera')
           _msg('Live')
+          session.signal({ type: 'onStage' })
         })
       })
     })
