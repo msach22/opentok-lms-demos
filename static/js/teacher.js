@@ -157,10 +157,72 @@ window.addEventListener('load', function studentController () {
       return false
     })
 
+    $('#students').on('click', '.stage-add', function (evt) {
+      evt.preventDefault()
+      var streamId = evt.target.dataset.streamid
+      var stream = students[streamId]
+      console.log('Adding to stage', stream)
+      if (stream) {
+        session.signal({
+          type: 'stageAdd',
+          data: streamId
+        }, function (err) {
+          if (err) {
+            _msg('Error broadcasting message of adding to stage')
+            console.log(err)
+            return
+          }
+          stream.subscribeToVideo(false)
+          $('#students-on-stage').append('<div id="stage-' + streamId + '" class="stream stage-stream"> ' +
+            '<div class="action-buttons">' +
+              '<button class="btn btn-secondary stage-remove" ' +
+                'data-streamid="' + streamId + '">Remove from stage</button>' +
+              '</div>' +
+            '</div>')
+          $('#stage-' + streamId).append(stream.element)
+          $('#stream-' + streamId).hide()
+          stream.subscribeToAudio(true)
+          stream.subscribeToVideo(true)
+          stage[streamId] = stream
+        })
+      }
+      return false
+    })
+
+    $('#students-on-stage').on('click', '.stage-remove', function (evt) {
+      evt.preventDefault()
+      var streamId = evt.target.dataset.streamid
+      var stream = stage[streamId]
+      console.log('Removing from stage', stream)
+      if (stream) {
+        session.signal({
+          type: 'stageRemove',
+          data: streamId
+        }, function (err) {
+          if (err) {
+            _msg('Error broadcasting message of removing to stage')
+            console.log(err)
+            return
+          }
+          stream.subscribeToVideo(false)
+          stream.subscribeToAudio(false)
+          $('#stream-' + streamId).append(stream.element)
+          $('#stream-' + streamId).show()
+          stream.subscribeToAudio(false)
+          stream.subscribeToVideo(true)
+          $('#stage-' + streamId).remove()
+          stage[streamId] = null
+          delete stage[streamId]
+        })
+      }
+      return false
+    })
+
     function subscribe (stream, connId) {
       var innerhtml = '<div id="stream-' + stream.id + '" class="stream col-3 type-' + stream.videoType + '">' +
         '<div class="action-buttons">' +
-          '<button type="button" class="btn btn-secondary stage-add">Add to stage</button>' +
+          '<button type="button" class="btn btn-secondary stage-add" ' +
+            'data-streamid="' + stream.id + '">Add to stage</button>' +
         '</div>' +
       '</div>'
       $('#students').append(innerhtml)
@@ -184,7 +246,9 @@ window.addEventListener('load', function studentController () {
     session.on('streamDestroyed', function (event) {
       console.log('Stream destroyed', event)
       students[event.stream.id] = null
+      stage[event.stream.id] = null
       $('#stream-' + event.stream.id).remove()
+      $('#stage-' + event.stream.id).remove()
     })
 
     session.on('connectionDestroyed', function (event) {

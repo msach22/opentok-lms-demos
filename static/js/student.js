@@ -4,6 +4,7 @@ window.addEventListener('load', function studentController () {
   var session
   var publisherCamera
   var students = {}
+  var stage = {}
 
   function _msg (m) {
     $('#message').text(m)
@@ -87,6 +88,45 @@ window.addEventListener('load', function studentController () {
       } else if (data.userType === 'student') {
         students[event.stream.id] = null
         delete students[event.stream.id]
+      }
+      if (stage[event.stream.id]) {
+        stage[event.stream.id] = null
+        delete stage[event.stream.id]
+      }
+    })
+
+    session.on('signal:stageAdd', function (evt) {
+      var stream = students[evt.data]
+      console.log('Added to stage', evt.data, stream)
+      if (stream) {
+        var s = session.subscribe(stream, 'student-stage', {
+          insertMode: 'append',
+          width: '100%',
+          height: '100%'
+        }, function (err) {
+          if (err) {
+            console.log('Error subscribing to student on stage', err)
+            _msg('Error subscribing to student on stage')
+          }
+        })
+        s.subscribeToAudio(true)
+        s.subscribeToVideo(true)
+        stage[stream.id] = s
+      }
+    })
+
+    session.on('signal:stageRemove', function (evt) {
+      var s = stage[evt.data]
+      console.log('Removed from stage', evt.data, s)
+      if (s) {
+        session.unsubscribe(s, function (err) {
+          if (err) {
+            console.log('Error subscribing to student on stage', err)
+            _msg('Error subscribing to student on stage')
+          }
+          stage[evt.data] = null
+          delete stage[evt.data]
+        })
       }
     })
 
