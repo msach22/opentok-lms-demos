@@ -6,6 +6,10 @@ window.addEventListener('load', function studentController () {
     camera: null,
     screen: null
   }
+  var isPublished = {
+    camera: false,
+    screen: false
+  }
   var stage = {}
   var students = {}
   var isLive = false
@@ -84,6 +88,7 @@ window.addEventListener('load', function studentController () {
         if (!isLive && publishers.camera == null) {
           $('#publish').attr('disabled', 'disabled')
         }
+        isPublished.screen = false
         _msg('Screen sharing stopped')
       })
       return false
@@ -121,7 +126,7 @@ window.addEventListener('load', function studentController () {
 
     $('#publish').on('click', function (evt) {
       evt.preventDefault()
-      if (publishers.camera != null) {
+      if (publishers.camera != null && !isPublished.camera) {
         session.publish(publishers.camera, function (err) {
           if (err) {
             _msg('Unable to publish camera')
@@ -130,14 +135,14 @@ window.addEventListener('load', function studentController () {
             return
           }
           $('#start-camera').attr('disabled', 'disabled')
-          $('#start-screen').attr('disabled', 'disabled')
           $('#publish').attr('disabled', 'disabled')
           console.log('Published camera')
           isLive = true
+          isPublished.camera = true
           _msg('Live')
         })
       }
-      if (publishers.screen != null) {
+      if (publishers.screen != null && !isPublished.screen) {
         session.publish(publishers.screen, function (err) {
           if (err) {
             _msg('Unable to publish screen')
@@ -145,11 +150,11 @@ window.addEventListener('load', function studentController () {
             console.log(err)
             return
           }
-          $('#start-camera').attr('disabled', 'disabled')
           $('#start-screen').attr('disabled', 'disabled')
           $('#publish').attr('disabled', 'disabled')
           console.log('Published screen')
           isLive = true
+          isPublished.screen = true
           _msg('Live')
         })
       }
