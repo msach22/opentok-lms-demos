@@ -5,6 +5,7 @@ window.addEventListener('load', function studentController () {
   var publisherCamera
   var students = {}
   var stage = {}
+  var streamsDiv = $('#streams')
 
   function _msg (m) {
     $('#message').text(m)
@@ -24,6 +25,8 @@ window.addEventListener('load', function studentController () {
           _msg('Error subscribing to teacher\'s camera stream')
           $('#teacher-camera').addClass('has-stream')
         }
+        $('#teacher-camera').addClass('has-stream')
+        streamsDiv.addClass('hasTeacherCamera')
       })
     }
 
@@ -38,6 +41,7 @@ window.addEventListener('load', function studentController () {
           _msg('Error subscribing to teacher\'s screen stream')
         }
         $('#teacher-screen').addClass('has-stream')
+        streamsDiv.addClass('hasTeacherScreen')
       })
     }
 
@@ -81,9 +85,12 @@ window.addEventListener('load', function studentController () {
         switch (event.stream.videoType) {
           case 'camera':
             $('#teacher-camera').removeClass('has-stream')
+            streamsDiv.removeClass('hasTeacherCamera')
             break
           case 'screen':
             $('#teacher-screen').removeClass('has-stream')
+            streamsDiv.removeClass('hasTeacherScreen')
+            break
         }
       } else if (data.userType === 'student') {
         students[event.stream.id] = null
@@ -108,6 +115,8 @@ window.addEventListener('load', function studentController () {
             console.log('Error subscribing to student on stage', err)
             _msg('Error subscribing to student on stage')
           }
+          streamsDiv.addClass('hasStudent')
+          $('#student-stage').addClass('has-stream')
         })
         s.subscribeToAudio(true)
         s.subscribeToVideo(true)
@@ -118,11 +127,13 @@ window.addEventListener('load', function studentController () {
     session.on('signal:stageRemove', function (evt) {
       var s = stage[evt.data]
       console.log('Removed from stage', evt.data, s)
+      $('#student-stage').removeClass('has-stream')
+      streamsDiv.removeClass('hasStudent')
       if (s) {
         session.unsubscribe(s, function (err) {
           if (err) {
-            console.log('Error subscribing to student on stage', err)
-            _msg('Error subscribing to student on stage')
+            console.log('Error unsubscribing from student on stage', err)
+            _msg('Error subscribing from student on stage')
           }
           stage[evt.data] = null
           delete stage[evt.data]
