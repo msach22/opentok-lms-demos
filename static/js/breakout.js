@@ -1,23 +1,38 @@
-/* global OT, room, initLayoutContainer */
+/* global OT, room */
 
 window.addEventListener('load', function studentController () {
   var session
   var publisher
-  var layout = initLayoutContainer(document.getElementById('subscribers'))
+  var streamCount = 0
+  var subscribersDiv = $('#subscribers')
 
   function _msg (m) {
     $('#message').html(m)
   }
 
   function launchSession (data) {
-    console.log(data)
     session = OT.initSession(data.apiKey, data.breakoutSessionId)
 
     session.on('streamCreated', function (evt) {
-      session.subscribe(evt.stream, 'subscribers', {
-        insertMode: 'append'
+      subscribersDiv.removeClass('streams-' + streamCount)
+      streamCount++
+      subscribersDiv.addClass('streams-' + streamCount)
+      var c = document.createElement('div')
+      c.className = 'stream'
+      c.id = 'stream-' + evt.stream.id
+      subscribersDiv.append(c)
+      session.subscribe(evt.stream, 'stream-' + evt.stream.id, {
+        insertMode: 'append',
+        width: '100%',
+        height: '100%'
       })
-      layout.layout()
+    })
+
+    session.on('streamDestroyed', function (evt) {
+      subscribersDiv.removeClass('streams-' + streamCount)
+      $('#stream-' + evt.stream.id).remove()
+      streamCount--
+      subscribersDiv.addClass('streams-' + streamCount)
     })
 
     session.connect(data.token, function (err) {
@@ -29,7 +44,7 @@ window.addEventListener('load', function studentController () {
       publisher = OT.initPublisher('self-view', {
         insertMode: 'append',
         width: '100%',
-        height: '240px',
+        height: '100%',
         resolution: '640x480',
         name: $('#user-name').val()
       }, function (err) {

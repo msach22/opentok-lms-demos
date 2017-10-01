@@ -11,14 +11,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
     crossorigin="anonymous">
   <link href="/css/app.css" rel="stylesheet" type="text/css">
-  <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/fbjkpogjjhklbffmfooofjgablhmcnhn">
-  <style type="text/css">
-    #subscribers {
-      width: 640px;
-      height: 480px;
-      position: relative;
-    }
-  </style>
+  <link href="/css/breakout.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
@@ -48,9 +41,6 @@
 
     <div class="row">
       <div class="col">
-        <a href="/student/<%= room.roomId %>" class="btn btn-outline-primary btn-block">&larr; Back to classroom</a>
-      </div>
-      <div class="col-6">
         <form id="join-form" class="form-inline">
           <div class="input-group mb-2 mr-sm-2 mb-sm-0">
             <div class="input-group-addon">Name</div>
@@ -60,15 +50,15 @@
         </form>
       </div>
     </div>
-    <hr>
     <div class="row">
-      <div id="self-view" class="col-3">
-        <!-- Own video is shown here -->
-      </div>
-      <div class="col">
-        <div id="subscribers">
-          <!-- Subscribed videos appear here -->
+      <div class="col-3">
+        <div id="self-view" class="mb-1">
+          <!-- Own video is shown here -->
         </div>
+        <a href="/student/<%= room.roomId %>" class="btn btn-outline-primary btn-block">&larr; Back to classroom</a>
+      </div>
+      <div id="subscribers" class="col-9">
+        <!-- Subscribed videos appear here -->
       </div>
     </div>
   </div>

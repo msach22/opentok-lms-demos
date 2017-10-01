@@ -1,0 +1,81 @@
+#self-view {
+    height: 180px;
+    max-width: 240px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0 auto;
+}
+#subscribers {
+    width: 100%;
+    height: 480px;
+    position: relative;
+}
+@media only screen and (min-width : 1367px) {
+    #subscribers {
+        height: 560px;
+    }
+}
+
+.stream {
+    border-radius: 5px;
+    overflow: hidden;
+    transition: width 0.5s ease-out;
+    padding: 0;
+}
+
+/* 1 other participant */
+.streams-1 .stream {
+    width: 640px;
+    height: 480px;
+    display: block;
+    margin: 0 auto;
+}
+@media only screen and (min-width : 1367px) {
+    .streams-1 .stream {
+        width: 746px;
+        height: 560px;
+    }
+}
+
+/* 2 other partitcipant */
+.streams-2 .stream {
+    width: 46%;
+    height: 320px;
+    display: inline-block;
+    margin: 0 2% 2% 2%;
+}
+@media only screen and (min-width : 1367px) {
+    .streams-2 .stream {
+        height: 360px;
+    }
+}
+
+/* 3 other participant */
+.streams-3 .stream {
+    width: 46%;
+    height: 240px;
+    display: inline-block;
+    margin: 0 2% 2% 2%;
+}
+.streams-3 .stream:last-child {
+    margin: 0 0 0 27%;
+}
+@media only screen and (min-width : 1367px) {
+    .streams-3 .stream {
+        height: 270px;
+    }
+}
+
+/* 4 other participant */
+.streams-4 .stream {
+    width: 46%;
+    height: 240px;
+    display: inline-block;
+    margin: 0 2% 2% 2%;
+}
+
+@media only screen and (min-width : 1367px) {
+    .streams-4 .stream {
+        height: 270px;
+    }
+}
