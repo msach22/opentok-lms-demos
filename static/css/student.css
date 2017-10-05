@@ -13,7 +13,7 @@
     position: relative;
 }
 .stream {
-    transition: 0.5s all ease-out;
+    transition: 0.5s all ease-in;
     width: 0;
     height: 0;
     position: relative;
@@ -34,6 +34,8 @@
 .hasTeacherScreen #teacher-screen {
     width: 100%;
     height: 100%;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 /* Guest student only */
@@ -73,34 +75,34 @@
 }
 
 /* Guest student + Teacher cam + Teacher screen */
-.hasTeacherCamera.hasTeacherScreen.hasStudent #teacher-camera,
-.hasTeacherCamera.hasTeacherScreen.hasStudent #student-stage {
+.hasTeacherCamera.hasTeacherScreen.hasStudent #teacher-camera {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
     width: 200px;
     height: 150px;
-    margin: 0;
-    float: left;
-    position: relative;
-    bottom: auto;
-    right: auto;
+    z-index: 2;
     border-radius: 5px;
-}
-.hasTeacherCamera.hasTeacherScreen.hasStudent #teacher-camera {
-    margin-left: -205px;
-    margin-bottom: 10px;
-    left: 50%;
+    overflow: hidden;
 }
 .hasTeacherCamera.hasTeacherScreen.hasStudent #student-stage {
-    margin-left: 5px;
-    margin-bottom: 10px;
-    left: 50%;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+    width: 200px;
+    height: 150px;
+    z-index: 2;
+    border-radius: 5px;
+    overflow: hidden;
 }
 .hasTeacherCamera.hasTeacherScreen.hasStudent #teacher-screen {
-    width: 568px;
-    height: 320px;
+    width: 100%;
+    height: 100%;
     display: block;
     float: none;
     clear: both;
     margin: 0 auto;
     border-radius: 5px;
     overflow: hidden;
+    z-index: 1;
 }
