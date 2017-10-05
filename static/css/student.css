@@ -36,6 +36,12 @@
     height: 100%;
 }
 
+/* Guest student only */
+.hasStudent #student-stage {
+    width: 100%;
+    height: 100%;
+}
+
 /* Teacher cam + screen */
 .hasTeacherCamera.hasTeacherScreen #teacher-camera {
     position: absolute;
