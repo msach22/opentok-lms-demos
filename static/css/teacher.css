@@ -1,6 +1,9 @@
 #stage > div {
     height: 240px;
 }
+.controls-container {
+    min-height: 340px;
+}
 .stream {
     height: 240px;
     position: relative;
