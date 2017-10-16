@@ -6,9 +6,23 @@ window.addEventListener('load', function studentController () {
   var students = {}
   var stage = {}
   var streamsDiv = $('#streams')
+  var timerContainer = $('#elapsed-time')
 
   function _msg (m) {
     $('#message').text(m)
+  }
+
+  function startTimer () {
+    timerContainer.parent().prepend('Elapsed Time: ')
+    var starttime = new Date()
+    setInterval(function updateTimer () {
+      var t = Date.parse(new Date()) - Date.parse(starttime)
+      timerContainer.text([
+        Math.floor((t / (1000 * 60 * 60)) % 24),
+        Math.floor((t / 1000 / 60) % 60),
+        Math.floor((t / 1000) % 60)
+      ].join(':'))
+    }, 1000)
   }
 
   function launchSession (data) {
@@ -149,7 +163,7 @@ window.addEventListener('load', function studentController () {
       }
       console.log('Connected to session', data.sessionId)
       _msg('Connected to OpenTok')
-
+      startTimer()
       publisherCamera = OT.initPublisher('self-view', {
         resolution: '320x240',
         height: '100%',
