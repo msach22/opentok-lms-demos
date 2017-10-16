@@ -14,6 +14,11 @@ window.addEventListener('load', function studentController () {
   var students = {}
   var isLive = false
 
+  var cameraToggle = $('#camera-toggle')
+  var screenToggle = $('#screen-toggle')
+  var joinbtn = $('#join')
+  var exitbtn = $('#exit').hide()
+
   function _msg (m) {
     $('#message').html(m)
   }
@@ -23,7 +28,7 @@ window.addEventListener('load', function studentController () {
     if (chrome && chrome.webstore) {
       chrome.webstore.install(extUrl, function () {
         $('#chrome-ext-install').hide()
-        $('#start-screen').show()
+        screenToggle.show()
         _msg('Chrome screenshare extension installed')
       }, function (err) {
         console.log(err)
@@ -41,11 +46,11 @@ window.addEventListener('load', function studentController () {
       } else if (res.extensionRequired === 'chrome' && res.extensionInstalled === false) {
         console.log('Chrome Screenshare required')
         $('#chrome-ext-install').show()
-        $('#start-screen').hide()
+        screenToggle.hide()
       } else {
         console.log('Screenshare available')
         $('#chrome-ext-install').hide()
-        $('#start-screen').show()
+        screenToggle.show()
         screenshareEnabled = true
       }
       // Trigger callback
@@ -56,8 +61,7 @@ window.addEventListener('load', function studentController () {
   function launchSession (data) {
     session = OT.initSession(data.apiKey, data.sessionId)
 
-    function createPublisherScreenshare (evt) {
-      evt.preventDefault()
+    function startScreen () {
       var opts = {
         audioSource: null,
         insertMode: 'append',
@@ -77,25 +81,39 @@ window.addEventListener('load', function studentController () {
           return
         }
         _msg('Screen sharing started.')
-        $('#start-screen').attr('disabled', 'disabled')
-        $('#publish').removeAttr('disabled')
+        screenToggle.addClass('isOn btn-primary').text('Stop Screen Share')
+        if (isLive && !isPublished.screen) {
+          publishScreen()
+        }
       })
       $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
 
       publishers.screen.on('mediaStopped', function () {
         publishers.screen = null
-        $('#start-screen').removeAttr('disabled')
+        screenToggle.removeAttr('disabled')
         if (!isLive && publishers.camera == null) {
-          $('#publish').attr('disabled', 'disabled')
+          joinbtn.attr('disabled', 'disabled')
         }
         isPublished.screen = false
         _msg('Screen sharing stopped')
       })
-      return false
     }
 
-    function createPublisherCamera (evt) {
-      evt.preventDefault()
+    function stopScreen () {
+      if (publishers.screen) {
+        publishers.screen.destroy()
+        screenToggle.removeClass('isOn btn-primary').text('Share Screen')
+        publishers.screen = null
+        isPublished.screen = false
+      }
+    }
+
+    function startCamera () {
+      if (publishers.camera) {
+        publishers.camera && publishers.camera.publishVideo(true)
+        cameraToggle.addClass('isOn btn-primary').text('Stop Camera')
+        return
+      }
       var opts = {
         insertMode: 'append',
         width: '100%',
@@ -106,17 +124,55 @@ window.addEventListener('load', function studentController () {
         if (err) {
           console.log(err)
           _msg('Error getting access to camera.')
+          cameraToggle.removeClass('isOn btn-primary')
           return
         }
-        $('#start-camera').attr('disabled', 'disabled')
-        $('#publish').removeAttr('disabled')
+        cameraToggle.addClass('isOn btn-primary').text('Stop Camera')
+        joinbtn.removeAttr('disabled')
+        if (isLive && !isPublished.camera) {
+          session.publish(publishers.camera, function (err) {
+            if (err) {
+              _msg('Unable to publish camera')
+              isPublished.camera = false
+              return
+            }
+            isPublished.camera = true
+          })
+        }
       })
+    }
+
+    function stopCamera () {
+      if (publishers.camera) {
+        publishers.camera && publishers.camera.publishVideo(false)
+        cameraToggle.removeClass('isOn btn-primary')
+        cameraToggle.text('Start Camera')
+      }
+    }
+
+    function toggleCamera (evt) {
+      evt.preventDefault()
+      if (cameraToggle.hasClass('isOn')) {
+        stopCamera()
+      } else {
+        startCamera()
+      }
       return false
     }
 
-    $('#start-screen').on('click', createPublisherScreenshare)
+    function toggleScreen (evt) {
+      evt.preventDefault()
+      if (screenToggle.hasClass('isOn')) {
+        stopScreen()
+      } else {
+        startScreen()
+      }
+      return false
+    }
 
-    $('#start-camera').on('click', createPublisherCamera)
+    screenToggle.on('click', toggleScreen)
+
+    cameraToggle.on('click', toggleCamera)
 
     $('#chrome-ext-install').on('click', function (evt) {
       evt.preventDefault()
@@ -124,42 +180,57 @@ window.addEventListener('load', function studentController () {
       return false
     })
 
-    $('#publish').on('click', function (evt) {
+    function publishScreen () {
+      session.publish(publishers.screen, function (err) {
+        if (err) {
+          _msg('Unable to publish screen')
+          console.log(err)
+          return
+        }
+        console.log('Published screen')
+        isLive = true
+        isPublished.screen = true
+        joinbtn.hide().attr('disabled', 'disabled')
+        exitbtn.removeAttr('disabled').show()
+        _msg('Live')
+      })
+    }
+
+    joinbtn.on('click', function (evt) {
       evt.preventDefault()
       if (publishers.camera != null && !isPublished.camera) {
         session.publish(publishers.camera, function (err) {
           if (err) {
             _msg('Unable to publish camera')
-            $('#start-camera').removeAttr('disabled')
             console.log(err)
             return
           }
-          $('#start-camera').attr('disabled', 'disabled')
-          $('#publish').attr('disabled', 'disabled')
           console.log('Published camera')
           isLive = true
           isPublished.camera = true
           _msg('Live')
+          joinbtn.hide().attr('disabled', 'disabled')
+          exitbtn.removeAttr('disabled').show()
         })
       }
       if (publishers.screen != null && !isPublished.screen) {
-        session.publish(publishers.screen, function (err) {
-          if (err) {
-            _msg('Unable to publish screen')
-            $('#start-screen').removeAttr('disabled')
-            console.log(err)
-            return
-          }
-          $('#start-screen').attr('disabled', 'disabled')
-          $('#publish').attr('disabled', 'disabled')
-          console.log('Published screen')
-          isLive = true
-          isPublished.screen = true
-          _msg('Live')
-        })
+        publishScreen()
       }
-
       return false
+    })
+
+    exitbtn.on('click', function (evt) {
+      evt.preventDefault()
+      if (publishers.camera) {
+        publishers.camera.destroy()
+      }
+      if (publishers.screen) {
+        publishers.screen.destroy()
+      }
+      if (session) {
+        session.disconnect()
+      }
+      document.location.href = document.location.origin
     })
 
     $('#students').on('click', '.stage-add', function (evt) {
@@ -295,6 +366,7 @@ window.addEventListener('load', function studentController () {
       }
       console.log('Connected to session', data.sessionId)
       _msg('Connected to OpenTok')
+      startCamera()
     })
   }
 
