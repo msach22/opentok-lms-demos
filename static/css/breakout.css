@@ -39,10 +39,10 @@
 
 /* 2 other partitcipant */
 .streams-2 .stream {
-    width: 46%;
+    width: 48%;
     height: 320px;
     display: inline-block;
-    margin: 0 2% 2% 2%;
+    margin: 0 1% 1% 1%;
 }
 @media only screen and (min-width : 1367px) {
     .streams-2 .stream {
@@ -52,10 +52,10 @@
 
 /* 3 other participant */
 .streams-3 .stream {
-    width: 46%;
+    width: 48%;
     height: 240px;
     display: inline-block;
-    margin: 0 2% 2% 2%;
+    margin: 0 1% 1% 1%;
 }
 .streams-3 .stream:last-child {
     margin: 0 0 0 27%;

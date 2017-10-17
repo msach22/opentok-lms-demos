@@ -9,10 +9,6 @@ window.addEventListener('load', function studentController () {
 
   $('#controls').hide()
 
-  function _msg (m) {
-    $('#message').html(m)
-  }
-
   function startTimer () {
     timerContainer.parent().prepend('Elapsed Time: ')
     var starttime = new Date()
@@ -53,7 +49,6 @@ window.addEventListener('load', function studentController () {
 
     session.connect(data.token, function (err) {
       if (err) {
-        _msg('Error connecting to OpenTok session')
         console.log(err)
         return
       }
@@ -66,16 +61,13 @@ window.addEventListener('load', function studentController () {
       }, function (err) {
         if (err) {
           console.log('Error creating publisher', err)
-          _msg('Error creating publisher')
           return
         }
         $('#controls').show()
         session.publish(publisher, function (err) {
           if (err) {
             console.log('Error publishing to session', err)
-            _msg('Error in publishing')
           }
-          _msg('Live')
           startTimer()
         })
       })
@@ -84,13 +76,11 @@ window.addEventListener('load', function studentController () {
 
   OT.getDevices(function (err, devices) {
     if (err) {
-      _msg('Error getting list of media devices')
       console.log(err)
       return
     }
     console.log('MediaDevices', devices)
     if (devices.length < 1) {
-      _msg('No media devices available')
       console.error('No media devices available')
       return
     }
@@ -103,7 +93,6 @@ window.addEventListener('load', function studentController () {
         launchSession(data)
       }, 'json')
         .fail(function (err) {
-          _msg('Error getting token')
           console.log(err)
         })
       return false
