@@ -115,6 +115,10 @@ window.addEventListener('load', function studentController () {
     session.on('signal:stageAdd', function (evt) {
       var stream = students[evt.data]
       console.log('Added to stage', evt.data, stream)
+      if (!stream) {
+        $('#self-view .badge').show()
+        return
+      }
       if (stream) {
         var s = session.subscribe(stream, 'student-stage', {
           insertMode: 'append',
@@ -138,6 +142,10 @@ window.addEventListener('load', function studentController () {
       console.log('Removed from stage', evt.data, s)
       $('#student-stage').removeClass('has-stream')
       streamsDiv.removeClass('hasStudent')
+      if (!s) {
+        $('#self-view .badge').hide()
+        return
+      }
       if (s) {
         session.unsubscribe(s, function (err) {
           if (err) {
