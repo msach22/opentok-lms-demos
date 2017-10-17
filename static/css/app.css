@@ -13,3 +13,6 @@ button, .btn {
 button:disabled, .btn:disabled {
     cursor: not-allowed;
 }
+img {
+    max-width: 100%;
+}

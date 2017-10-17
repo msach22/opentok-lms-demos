@@ -81,7 +81,7 @@ window.addEventListener('load', function studentController () {
           return
         }
         _msg('Screen sharing started.')
-        screenToggle.addClass('isOn btn-primary').text('Stop Screen Share')
+        screenToggle.addClass('isOn btn-primary').removeClass('btn-outline-primary').text('Stop Screen Share')
         if (isLive && !isPublished.screen) {
           publishScreen()
         }
@@ -96,13 +96,14 @@ window.addEventListener('load', function studentController () {
         }
         isPublished.screen = false
         _msg('Screen sharing stopped')
+        screenToggle.addClass('btn-outline-primary').removeClass('isOn btn-primary').text('Share Screen')
       })
     }
 
     function stopScreen () {
       if (publishers.screen) {
         publishers.screen.destroy()
-        screenToggle.removeClass('isOn btn-primary').text('Share Screen')
+        screenToggle.removeClass('isOn btn-primary').addClass('btn-outline-primary').text('Share Screen')
         publishers.screen = null
         isPublished.screen = false
       }
@@ -111,7 +112,7 @@ window.addEventListener('load', function studentController () {
     function startCamera () {
       if (publishers.camera) {
         publishers.camera && publishers.camera.publishVideo(true)
-        cameraToggle.addClass('isOn btn-primary').text('Stop Camera')
+        cameraToggle.addClass('isOn btn-primary').removeClass('btn-outline-primary').text('Stop Camera')
         return
       }
       var opts = {
@@ -124,10 +125,10 @@ window.addEventListener('load', function studentController () {
         if (err) {
           console.log(err)
           _msg('Error getting access to camera.')
-          cameraToggle.removeClass('isOn btn-primary')
+          cameraToggle.removeClass('isOn btn-primary').addClass('btn-outline-primary').text('Start Camera')
           return
         }
-        cameraToggle.addClass('isOn btn-primary').text('Stop Camera')
+        cameraToggle.addClass('isOn btn-primary').removeClass('btn-outline-primary').text('Stop Camera')
         joinbtn.removeAttr('disabled')
         if (isLive && !isPublished.camera) {
           session.publish(publishers.camera, function (err) {
@@ -145,8 +146,7 @@ window.addEventListener('load', function studentController () {
     function stopCamera () {
       if (publishers.camera) {
         publishers.camera && publishers.camera.publishVideo(false)
-        cameraToggle.removeClass('isOn btn-primary')
-        cameraToggle.text('Start Camera')
+        cameraToggle.removeClass('isOn btn-primary').addClass('btn-outline-primary').text('Start Camera')
       }
     }
 

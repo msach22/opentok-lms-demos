@@ -17,7 +17,7 @@
 
 <body>
   <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <a class="navbar-brand" href="/student/<%= room.roomId %>">Student</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
         aria-expanded="false" aria-label="Toggle navigation">
@@ -36,11 +36,6 @@
 
     <div class="row">
       <div class="col">
-        <div id="message" class="alert alert-primary" role="alert">Offline</div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
         <form id="join-form" class="form-inline">
           <div class="input-group mb-2 mr-sm-2 mb-sm-0">
             <div class="input-group-addon">Name</div>
@@ -50,15 +45,17 @@
         </form>
       </div>
     </div>
+
     <div id="controls" class="row justify-content-center">
-      <div class="col-3">
+      <div class="col-2">
           <div id="self-view" class="mb-1"></div>
+          <div class="mb-2 mt-2"><img src="/dummy-chatbox.png" alt="Chatbox"></div>
           <div class="mb-2 mt-2"><span id="elapsed-time"></span></div>
           <div class="mb-1">
             <a href="/breakout/<%= room.roomId %>" class="btn btn-outline-primary btn-block">Breakout</a>
           </div>
       </div>
-      <div id="streams" class="col-9">
+      <div id="streams" class="col-10">
         <div id="teacher-camera" class="camera-view stream"></div>
         <div id="student-stage" class="camera-view stream"></div>
         <div id="teacher-screen" class="screen-view stream"></div>

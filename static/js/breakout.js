@@ -5,9 +5,25 @@ window.addEventListener('load', function studentController () {
   var publisher
   var streamCount = 0
   var subscribersDiv = $('#subscribers')
+  var timerContainer = $('#elapsed-time')
+
+  $('#controls').hide()
 
   function _msg (m) {
     $('#message').html(m)
+  }
+
+  function startTimer () {
+    timerContainer.parent().prepend('Elapsed Time: ')
+    var starttime = new Date()
+    setInterval(function updateTimer () {
+      var t = Date.parse(new Date()) - Date.parse(starttime)
+      timerContainer.text([
+        Math.floor((t / (1000 * 60 * 60)) % 24),
+        Math.floor((t / 1000 / 60) % 60),
+        Math.floor((t / 1000) % 60)
+      ].join(':'))
+    }, 1000)
   }
 
   function launchSession (data) {
@@ -53,12 +69,14 @@ window.addEventListener('load', function studentController () {
           _msg('Error creating publisher')
           return
         }
+        $('#controls').show()
         session.publish(publisher, function (err) {
           if (err) {
             console.log('Error publishing to session', err)
             _msg('Error in publishing')
           }
           _msg('Live')
+          startTimer()
         })
       })
     })

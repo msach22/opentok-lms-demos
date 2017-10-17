@@ -8,9 +8,7 @@ window.addEventListener('load', function studentController () {
   var streamsDiv = $('#streams')
   var timerContainer = $('#elapsed-time')
 
-  function _msg (m) {
-    $('#message').text(m)
-  }
+  $('#controls').hide()
 
   function startTimer () {
     timerContainer.parent().prepend('Elapsed Time: ')
@@ -36,7 +34,6 @@ window.addEventListener('load', function studentController () {
       }, function (err) {
         if (err) {
           console.log('Error subscribing to teacher\'s camera stream', err)
-          _msg('Error subscribing to teacher\'s camera stream')
           $('#teacher-camera').addClass('has-stream')
         }
         $('#teacher-camera').addClass('has-stream')
@@ -52,7 +49,6 @@ window.addEventListener('load', function studentController () {
       }, function (err) {
         if (err) {
           console.log('Error subscribing to teacher\'s screen stream', err)
-          _msg('Error subscribing to teacher\'s screen stream')
         }
         $('#teacher-screen').addClass('has-stream')
         streamsDiv.addClass('hasTeacherScreen')
@@ -127,7 +123,6 @@ window.addEventListener('load', function studentController () {
         }, function (err) {
           if (err) {
             console.log('Error subscribing to student on stage', err)
-            _msg('Error subscribing to student on stage')
           }
           streamsDiv.addClass('hasStudent')
           $('#student-stage').addClass('has-stream')
@@ -147,7 +142,6 @@ window.addEventListener('load', function studentController () {
         session.unsubscribe(s, function (err) {
           if (err) {
             console.log('Error unsubscribing from student on stage', err)
-            _msg('Error subscribing from student on stage')
           }
           stage[evt.data] = null
           delete stage[evt.data]
@@ -157,13 +151,12 @@ window.addEventListener('load', function studentController () {
 
     session.connect(data.token, function (error) {
       if (error) {
-        _msg('Error connecting to OpenTok session')
         console.log(error)
         return
       }
       console.log('Connected to session', data.sessionId)
-      _msg('Connected to OpenTok')
       startTimer()
+      $('#controls').show()
       publisherCamera = OT.initPublisher('self-view', {
         resolution: '320x240',
         height: '100%',
@@ -172,18 +165,15 @@ window.addEventListener('load', function studentController () {
         name: $('#user-name').val()
       }, function (err) {
         if (err) {
-          _msg('Error getting feed for camera 1')
           console.log(err)
           return
         }
         session.publish(publisherCamera, function (err) {
           if (err) {
-            _msg('Unable to publish camera')
             console.log(err)
             return
           }
           console.log('Published camera')
-          _msg('Live')
           session.signal({ type: 'onStage' })
         })
       })
@@ -192,13 +182,11 @@ window.addEventListener('load', function studentController () {
 
   OT.getDevices(function (err, devices) {
     if (err) {
-      _msg('Error getting list of media devices')
       console.log(err)
       return
     }
     console.log('MediaDevices', devices)
     if (devices.length < 1) {
-      _msg('No media devices available')
       console.error('No media devices available')
       return
     }
@@ -212,7 +200,6 @@ window.addEventListener('load', function studentController () {
         launchSession(data)
       }, 'json')
         .fail(function (err) {
-          _msg('Error getting token')
           console.log(err)
         })
       return false

@@ -51,10 +51,12 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-3">
+      <div id="controls" class="col-3 mb-4">
         <div id="self-view" class="mb-1">
           <!-- Own video is shown here -->
         </div>
+        <div class="mb-2 mt-2"><img src="/dummy-chatbox.png" alt="Chatbox"></div>
+        <div class="mb-2 mt-2"><span id="elapsed-time"></span></div>
         <a href="/student/<%= room.roomId %>" class="btn btn-outline-primary btn-block">&larr; Back to classroom</a>
       </div>
       <div id="subscribers" class="col-9">
