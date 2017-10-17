@@ -17,7 +17,7 @@
 
 <body>
   <div class="container-fluid">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
       <a class="navbar-brand" href="/teacher/<%= room.roomId %>">Teacher</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
         aria-expanded="false" aria-label="Toggle navigation">
@@ -34,11 +34,6 @@
       </div>
     </nav>
 
-    <div class="row">
-      <div class="col">
-        <div id="message" class="alert alert-primary" role="alert">Offline</div>
-      </div>
-    </div>
     <div class="row controls-container">
 
       <div class="col-3">
@@ -52,8 +47,8 @@
                 <button id="chrome-ext-install" class="btn btn-outline-secondary btn-block">Install screenshare extension</button>
               </div>
               <div class="form-group">
-                <button id="join" class="btn btn-primary btn-block" disabled="disabled">Join</button>
-                <button id="exit" class="btn btn-primary btn-block" disabled="disabled">Exit</button>
+                <button id="join" class="btn btn-success btn-block" disabled="disabled">Join</button>
+                <button id="exit" class="btn btn-outline-danger btn-block" disabled="disabled">Exit</button>
               </div>
             </form>
           </div>
@@ -79,6 +74,22 @@
       <div class="col">
         <h2>Students</h2>
         <div id="students" class="row"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
       </div>
     </div>
   </div>

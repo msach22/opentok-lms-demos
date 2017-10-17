@@ -19,8 +19,10 @@ window.addEventListener('load', function studentController () {
   var joinbtn = $('#join')
   var exitbtn = $('#exit').hide()
 
-  function _msg (m) {
-    $('#message').html(m)
+  function modal (title, content) {
+    $('#modal .modal-title').text(title)
+    $('#modal .modal-body').html(content)
+    $('#modal').modal('show')
   }
 
   function installChromeExtension () {
@@ -29,11 +31,10 @@ window.addEventListener('load', function studentController () {
       chrome.webstore.install(extUrl, function () {
         $('#chrome-ext-install').hide()
         screenToggle.show()
-        _msg('Chrome screenshare extension installed')
       }, function (err) {
         console.log(err)
-        _msg('Please install the screen sharing from ' +
-        '<a href="' + extUrl + '" target="_blank">this link</a> and reload this page')
+        modal('Install screenshare extension', '<div>Please install the screen sharing from ' +
+        '<a href="' + extUrl + '" target="_blank">this link</a> and reload this page</div>')
       })
     }
   }
@@ -42,7 +43,7 @@ window.addEventListener('load', function studentController () {
     OT.checkScreenSharingCapability(function (res) {
       var screenshareEnabled = false
       if (!res.supported || res.extensionRegistered === false) {
-        _msg('Screensharing is not supported')
+        modal('Screenshare', 'Screensharing is not supported')
       } else if (res.extensionRequired === 'chrome' && res.extensionInstalled === false) {
         console.log('Chrome Screenshare required')
         $('#chrome-ext-install').show()
@@ -72,15 +73,11 @@ window.addEventListener('load', function studentController () {
         name: 'Teacher screen'
       }
 
-      _msg('Setting up screenshare...')
-
       publishers.screen = OT.initPublisher('teacher-screen', opts, function (err) {
         if (err) {
           console.log(err)
-          _msg('Error getting access to screen share.')
           return
         }
-        _msg('Screen sharing started.')
         screenToggle.addClass('isOn btn-primary').removeClass('btn-outline-primary').text('Stop Screen Share')
         if (isLive && !isPublished.screen) {
           publishScreen()
@@ -95,7 +92,6 @@ window.addEventListener('load', function studentController () {
           joinbtn.attr('disabled', 'disabled')
         }
         isPublished.screen = false
-        _msg('Screen sharing stopped')
         screenToggle.addClass('btn-outline-primary').removeClass('isOn btn-primary').text('Share Screen')
       })
     }
@@ -124,7 +120,6 @@ window.addEventListener('load', function studentController () {
       publishers.camera = OT.initPublisher('teacher-camera', opts, function (err) {
         if (err) {
           console.log(err)
-          _msg('Error getting access to camera.')
           cameraToggle.removeClass('isOn btn-primary').addClass('btn-outline-primary').text('Start Camera')
           return
         }
@@ -133,7 +128,6 @@ window.addEventListener('load', function studentController () {
         if (isLive && !isPublished.camera) {
           session.publish(publishers.camera, function (err) {
             if (err) {
-              _msg('Unable to publish camera')
               isPublished.camera = false
               return
             }
@@ -183,7 +177,6 @@ window.addEventListener('load', function studentController () {
     function publishScreen () {
       session.publish(publishers.screen, function (err) {
         if (err) {
-          _msg('Unable to publish screen')
           console.log(err)
           return
         }
@@ -192,7 +185,6 @@ window.addEventListener('load', function studentController () {
         isPublished.screen = true
         joinbtn.hide().attr('disabled', 'disabled')
         exitbtn.removeAttr('disabled').show()
-        _msg('Live')
       })
     }
 
@@ -201,14 +193,12 @@ window.addEventListener('load', function studentController () {
       if (publishers.camera != null && !isPublished.camera) {
         session.publish(publishers.camera, function (err) {
           if (err) {
-            _msg('Unable to publish camera')
             console.log(err)
             return
           }
           console.log('Published camera')
           isLive = true
           isPublished.camera = true
-          _msg('Live')
           joinbtn.hide().attr('disabled', 'disabled')
           exitbtn.removeAttr('disabled').show()
         })
@@ -244,7 +234,6 @@ window.addEventListener('load', function studentController () {
           data: streamId
         }, function (err) {
           if (err) {
-            _msg('Error broadcasting message of adding to stage')
             console.log(err)
             return
           }
@@ -276,7 +265,6 @@ window.addEventListener('load', function studentController () {
           data: streamId
         }, function (err) {
           if (err) {
-            _msg('Error broadcasting message of removing to stage')
             console.log(err)
             return
           }
@@ -353,19 +341,16 @@ window.addEventListener('load', function studentController () {
         }
       } catch (e) {
         console.log('Error subscribing to stream', e)
-        _msg('Error subscribing to stream')
       }
     })
 
     session.connect(data.token, function (error) {
       if (error) {
         alert('Error connecting to OpenTok session')
-        _msg('Error')
         console.log(error)
         return
       }
       console.log('Connected to session', data.sessionId)
-      _msg('Connected to OpenTok')
       startCamera()
     })
   }
@@ -377,7 +362,6 @@ window.addEventListener('load', function studentController () {
     })
   }, 'json')
     .fail(function (err) {
-      _msg('Error getting token')
       console.log(err)
     })
 })
