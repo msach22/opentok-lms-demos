@@ -4,6 +4,9 @@
 .h3, h3 {
     font-size: 1.25rem;
 }
+#publish {
+    display: none;
+}
 button, .btn {
     cursor: pointer;
 }

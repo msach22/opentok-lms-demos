@@ -83,8 +83,8 @@ window.addEventListener('load', function studentController () {
         return
       }
       _msg('Screen sharing started.')
-      $('#share-screen').attr('disabled', 'disabled')
-      $('#publish').removeAttr('disabled')
+      $('#share-screen').attr('disabled', 'disabled').hide()
+      $('#publish').removeAttr('disabled').show()
     })
     $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
 
@@ -139,8 +139,9 @@ window.addEventListener('load', function studentController () {
             return
           }
           $('input[type=radio][name=videoType]').attr('disabled', 'disabled')
-          $('#publish').removeAttr('disabled')
+          $('#publish').removeAttr('disabled').show()
           $('.camera').attr('disabled', 'disabled')
+          $('#start-camera').hide()
         })
       })
 
@@ -152,6 +153,7 @@ window.addEventListener('load', function studentController () {
               console.log(err)
               return
             }
+            $('#publish').attr('disabled', 'disabled').hide()
             console.log('Published camera')
             _msg('Live')
           })
@@ -163,7 +165,7 @@ window.addEventListener('load', function studentController () {
               console.log(err)
               return
             }
-            $('#publish').attr('disabled', 'disabled')
+            $('#publish').attr('disabled', 'disabled').hide()
             console.log('Published camera')
             _msg('Live')
           })
