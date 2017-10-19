@@ -29,9 +29,9 @@ if (!OPENTOK_API_SECRET) {
 // Generate an OpenTok session. Will will use a single session only
 const OT = new OpenTok(OPENTOK_API_KEY, OPENTOK_API_SECRET)
 
-function createSession () {
+function createSession (mediaMode = 'routed') {
   return new Promise(function (resolve, reject) {
-    OT.createSession({ mediaMode: 'routed' }, (err, session) => {
+    OT.createSession({ mediaMode: mediaMode }, (err, session) => {
       if (err) {
         console.log('Error creating OpenTok session', err)
         return reject(err)
@@ -54,7 +54,7 @@ function createToken (sessionId, userName, userType = 'student', role = 'publish
   }
 }
 
-function createRoom () {
+function createRoom (p2p = false) {
   return new Promise(function (resolve, reject) {
     const room = {
       roomId: createId(),
@@ -62,7 +62,7 @@ function createRoom () {
       breakoutSessionId: null,
       students: []
     }
-    createSession()
+    createSession(p2p ? 'relayed' : 'routed')
       .then(session => {
         room.sessionId = session.sessionId
         return createSession()
@@ -108,15 +108,17 @@ app.get('/room', (req, res, next) => {
       apiKey: OPENTOK_API_KEY
     })
   }
+  const p2p = req.query.p2p === '1'
   // If room doesn't exist, generate session Ids
-  createRoom()
+  createRoom(p2p)
     .then(room => {
       return res.status(200).json({
         roomId: room.roomId,
         sessionId: room.sessionId,
         breakoutSessionId: room.breakoutSessionId,
         students: room.students,
-        apiKey: OPENTOK_API_KEY
+        apiKey: OPENTOK_API_KEY,
+        p2p: p2p
       })
     })
     .catch(next)
@@ -180,7 +182,7 @@ app.get('/teacher', (req, res, next) => {
   if (req.query.roomId) {
     return res.redirect(`/teacher/${req.query.roomId.trim()}`)
   }
-  createRoom()
+  createRoom(req.query.p2p === '1')
     .then(room => {
       return res.redirect(`/teacher/${room.roomId}`)
     })
@@ -191,7 +193,7 @@ app.get('/student', (req, res, next) => {
   if (req.query.roomId) {
     return res.redirect(`/student/${req.query.roomId.trim()}`)
   }
-  createRoom()
+  createRoom(req.query.p2p === '1')
     .then(room => {
       return res.redirect(`/student/${room.roomId}`)
     })

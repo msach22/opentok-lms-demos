@@ -23,24 +23,38 @@
 
         <div class="row justify-content-around">
             <div class="col-4">
+                <h2>Teacher</h2>
                 <form action="/teacher" method="GET">
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-outline-dark btn-lg" value="Join as Teacher">
-                    </div>
                     <div class="form-group">
                         <label for="roomId">Room ID <small>(Optional)</small></label>
                         <input type="text" class="form-control" name="roomId" id="roomId" placeholder="Enter room ID">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input name="p2p" class="form-check-input" type="checkbox" value="1">
+                            Peer-to-peer
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-outline-dark btn-lg" value="Join as Teacher">
                     </div>
                 </form>
             </div>
             <div class="col-4">
+                <h2>Student</h2>
                 <form action="/student" method="GET">
-                    <div class="form-group">
-                        <input type="submit" class="btn btn-outline-dark btn-lg" value="Join as Student">
-                    </div>
                     <div class="form-group">
                         <label for="roomId">Room ID <small>(Optional)</small></label>
                         <input type="text" class="form-control" name="roomId" id="roomId" placeholder="Enter room ID">
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input name="p2p" class="form-check-input" type="checkbox" value="1">
+                            Peer-to-peer
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" class="btn btn-outline-dark btn-lg" value="Join as Student">
                     </div>
                 </form>
             </div>
